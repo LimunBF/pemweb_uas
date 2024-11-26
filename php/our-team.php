@@ -34,6 +34,13 @@ session_start();
         </div>
     </nav>
 
+    <!-- Title Section -->
+    <section class="hero bg-secondary text-white py-5">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold">Our Team</h1>
+        </div>
+    </section>
+
     <!-- Team Section -->
     <div class="container my-5">
         <div class="row g-4 justify-content-center">
