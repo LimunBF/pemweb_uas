@@ -1,0 +1,76 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Gradient Box */
+.gradient-box {
+    background: linear-gradient(to bottom right, #f8b9c8, #8a8dc9);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+header .logo {
+    font-weight: bold;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    nav {
+        display: none;
+    }
+}
+
+h1, h3 {
+    margin: 0;
+}
+
+.shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bg-light {
+    background-color: #ffffff;
+}
+
+main {
+    flex: 1; /* Membuat konten utama mengisi sisa ruang di antara header dan footer */
+}
+
+footer {
+    color: white;
+    text-align: center;
+}
+
+.bg-primary {
+    background-color: #3c4c8c !important; /* Menimpa warna default Bootstrap */
+    color: white !important; /* Warna teks tetap putih */
+}
+
+nav a {
+    font-size: 0.5rem; /* Ukuran font lebih kecil untuk navigasi */
+}
+
+/* Gradient Background untuk tombol "Beli Tiket" */
+.btn-gradient {
+    background: linear-gradient(to top right, #3c4c8c, #ecddd9, #f1b0bb); /* Gradasi awal */
+    color: white; /* Warna teks putih */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    transition: background-position 0.3s ease, color 0.3s ease; /* Transisi untuk posisi latar belakang dan warna teks */
+    background-size: 200% 200%; /* Mengatur ukuran latar belakang untuk efek pergerakan */
+    background-position: bottom left; /* Posisi awal latar belakang */
+}
+
+/* Hover Effect: Gradasi bergerak dan berubah menjadi #3c4c8c */
+.btn-gradient:hover {
+    background-position: top right; /* Menggerakkan latar belakang saat hover */
+    background: linear-gradient(to top right, #3c4c8c, #3c4c8c, #3c4c8c); /* Gradasi berubah menjadi satu warna */
+    color: #ecddd9; /* Warna teks saat hover */
+}
