@@ -47,9 +47,10 @@
             </div>
 
             <!-- Kolom 4: Login Button -->
-            <div class="col-12 col-md-1 text-md-end">
-                <button class="btn btn-light">Masuk</button>
+            <div class="col-12 col-md-1 text-md-start">
+                <button class="btn btn-light" onclick="window.location.href='login.php'">Masuk</button>
             </div>
+
         </div>
     </div>
 </header>
@@ -70,7 +71,7 @@
             <div class="bg-light p-4 rounded shadow">
                 <h3 class="fw-bold mb-3">Deskripsi</h3>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam facilisis leo id augue ullamcorper vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-                <button class="btn btn-gradient mt-3 px-4">Beli Tiket</button>
+                <button class="btn btn-gradient mt-3 px-4"  onclick="window.location.href='detail-tiket.php'">Beli Tiket</button>
             </div>
         </div>
     </div>
