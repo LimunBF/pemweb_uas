@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/navbar_footer.css">
+    <link rel="stylesheet" type="text/css" href="css/home.css">
 </head>
 
 <body>
@@ -80,8 +81,129 @@
         </div>
     </header>
 
-    <div style="height: 100vh;">
+    <div class="container py-4">
 
+        <!-- Header Carousel -->
+        <div id="headerCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+            </div>
+
+            <!-- Carousel Items -->
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="assets/images/carousel1.png" class="d-block w-100" alt="Slide 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/carousel2.png" class="d-block w-100" alt="Slide 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/images/carousel3.png" class="d-block w-100" alt="Slide 3">
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#headerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#headerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <!-- Event Pilihan Section -->
+        <h3 class="fw-bold mb-4">Event Pilihan</h3>
+        <div class="row g-4">
+            <!-- Event Card 1 -->
+            <div class="col-md-3">
+                <div class="card event-card">
+                    <img src="assets/images/event1.png" class="card-img-top" alt="Event 1">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">WHISKY LIVE JAKARTA 2025</h6>
+                        <p class="card-text mb-1 text-muted">01 Feb - 02 Feb 2025</p>
+                        <p class="fw-bold mb-2">Rp350.000</p>
+                        <small class="text-muted">Caledonia Live</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Card 2 -->
+            <div class="col-md-3">
+                <div class="card event-card">
+                    <img src="assets/images/event2.png" class="card-img-top" alt="Event 2">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">CINTA KALA SENJA - BERNADYA</h6>
+                        <p class="card-text mb-1 text-muted">18 Dec 2024</p>
+                        <p class="fw-bold mb-2">Rp299.000</p>
+                        <small class="text-muted">Bengkel Space</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Card 3 -->
+            <div class="col-md-3">
+                <div class="card event-card">
+                    <img src="assets/images/event3.png" class="card-img-top" alt="Event 3">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">HOLIMOON 2024</h6>
+                        <p class="card-text mb-1 text-muted">23 Dec 2024</p>
+                        <p class="fw-bold mb-2">Rp125.000</p>
+                        <small class="text-muted">Deal Indonesia</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Card 4 -->
+            <div class="col-md-3">
+                <div class="card event-card">
+                    <img src="assets/images/event4.png" class="card-img-top" alt="Event 4">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">Carnival 2024</h6>
+                        <p class="card-text mb-1 text-muted">31 Dec 2024 - 01 Jan 2025</p>
+                        <p class="fw-bold mb-2">Rp200.000</p>
+                        <small class="text-muted">PT Bintan Resort Cakrawala</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Events Section -->
+        <div class="container my-5 py-4" style="background-color: #0b2341; color: white; border-radius: 10px;">
+            <h3 class="fw-bold text-center mb-4">Top Events!</h3>
+            <div class="d-flex justify-content-around align-items-center">
+                <!-- Event 1 -->
+                <div class="position-relative text-center">
+                    <h1 class="display-1 fw-bold text-white position-absolute top-50 start-50 translate-middle"
+                        style="opacity: 0.2; z-index: 0;">1</h1>
+                    <img src="assets/images/event1.png" alt="Event 1" class="position-relative rounded-3"
+                        style="width: 250px; height: 150px; object-fit: cover; z-index: 1;">
+                </div>
+
+                <!-- Event 2 -->
+                <div class="position-relative text-center">
+                    <h1 class="display-1 fw-bold text-white position-absolute top-50 start-50 translate-middle"
+                        style="opacity: 0.2; z-index: 0;">2</h1>
+                    <img src="assets/images/event2.png" alt="Event 2" class="position-relative rounded-3"
+                        style="width: 250px; height: 150px; object-fit: cover; z-index: 1;">
+                </div>
+
+                <!-- Event 3 -->
+                <div class="position-relative text-center">
+                    <h1 class="display-1 fw-bold text-white position-absolute top-50 start-50 translate-middle"
+                        style="opacity: 0.2; z-index: 0;">3</h1>
+                    <img src="assets/images/event3.png" alt="Event 3" class="position-relative rounded-3"
+                        style="width: 250px; height: 150px; object-fit: cover; z-index: 1;">
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
