@@ -1,0 +1,90 @@
+.navbar {
+    background-color: #0b2341;
+}
+
+.search-bar {
+    background-color: #152c52;
+    color: white;
+    border: none;
+}
+
+.search-bar::placeholder {
+    color: var(--placeholder-color, #a0b8d8);
+}
+
+/* Change placeholder color on focus */
+.search-bar:focus::placeholder {
+    color: #000000;
+}
+.icon-link {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    margin-right: 1rem;
+    font-size: 0.9rem;
+}
+
+.icon-link img {
+    width: 18px;
+    margin-right: 5px;
+    filter: invert(1);
+}
+
+.profile-icon {
+    width: 35px;
+    height: 35px;
+    background-color: white;
+    border: 2px solid #2f80ed;
+    border-radius: 50%;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    height: 100vh;
+}
+
+/* Footer Styling */
+.footer {
+    background-color: #0b2341;
+    color: #a0b8d8;
+    text-align: center;
+    padding: 30px 0;
+}
+
+.footer a {
+    text-decoration: none;
+    color: #a0b8d8;
+    margin: 0 10px;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+    color: white;
+}
+
+.footer-icons i {
+    font-size: 24px;
+    margin: 10px 15px;
+    color: #a0b8d8;
+    transition: color 0.3s ease;
+}
+
+.footer-icons i:hover {
+    color: white;
+}
+
+.footer-bottom {
+    background-color: #1a3970;
+    color: #d1d9e6;
+    padding: 10px 0;
+    font-size: 14px;
+    text-align: center
+}
