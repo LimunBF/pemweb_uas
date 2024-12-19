@@ -5,9 +5,9 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Ganti dengan kredensial database Anda
     $servername = "localhost";
-    $username = "username_database";
-    $password = "password_database";
-    $dbname = "nama_database";
+    $username = "root";
+    $password = "";
+    $dbname = "loket_com";
 
     // Ambil data dari form
     $email = $_POST['email'];

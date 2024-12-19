@@ -5,9 +5,9 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Ganti dengan kredensial database Anda
     $servername = "localhost";
-    $username = "username_database";
-    $password = "password_database";
-    $dbname = "nama_database";
+    $username = "root";
+    $password = "";
+    $dbname = "loket_com";
 
     try {
         // Membuat koneksi menggunakan PDO
@@ -27,8 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (password_verify($_POST['password'], $user['password'])) {
                 // Set session
                 $_SESSION['email'] = $user['email'];
-                $_SESSION['user_id'] = $user['id'];
-                header("Location: dashboard.php");
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['role'] = $user['role'];
+                
+                if ($user['role'] === 'admin') {
+                    header("Location: admin_dashboard.php");
+                } else {
+                    header("Location: ../index.php");
+                }
                 exit();
             } else {
                 $error = "Email atau kata sandi salah.";
