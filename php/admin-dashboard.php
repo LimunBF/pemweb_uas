@@ -54,41 +54,57 @@ if ($conn->connect_error) {
         <canvas id="chart" style="width: 100%; height: 400px;"></canvas>
 
         <!-- Tabel Konten Home -->
-        <h2 class="mt-5">Konten Halaman Home</h2>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Judul</th>
-                    <th>Deskripsi</th>
-                    <th>Gambar</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Ambil data dari database (sesuaikan query dengan struktur tabel Anda)
-                $sql = "SELECT * FROM konten_home"; // Ubah "konten_home" sesuai dengan nama tabel Anda
-                $result = $conn->query($sql);
-
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . $row['id'] . "</td>";
-                        echo "<td><input type='text' class='form-control' value='" . $row['judul'] . "' id='judul-" . $row['id'] . "'></td>";
-                        echo "<td><textarea class='form-control' id='deskripsi-" . $row['id'] . "'>" . $row['deskripsi'] . "</textarea></td>";
-                        echo "<td><img src='assets/images/" . $row['gambar'] . "' alt='" . $row['judul'] . "' width='100'></td>";
-                        echo "<td><button class='btn btn-primary save-btn' data-id='" . $row['id'] . "'>Simpan</button></td>";
-                        echo "</tr>";
+        <div class="container mt-5">
+            <h2>Data Event</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Event ID</th>
+                        <th>Title</th>
+                        <th>Event Date</th>
+                        <th>Location</th>
+                        <th>Organizer Name</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    try {
+                        // Gunakan koneksi yang sama
+                        $sql = "SELECT * FROM events";
+                        $result = $conn->query($sql);
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $row['event_id'] . "</td>";
+                                echo "<td>" . $row['title'] . "</td>";
+                                echo "<td>" . $row['event_date'] . "</td>";
+                                echo "<td>" . $row['location'] . "</td>";
+                                echo "<td>" . $row['organizer_name'] . "</td>";
+                                echo "<td>" . $row['created_at'] . "</td>";
+                                echo "<td>" . $row['updated_at'] . "</td>";
+                                echo "<td>";
+                                echo "<a href='edit_detail.php?event_id=" . $row['event_id'] . "' class='btn btn-warning btn-sm me-2'>Edit</a>";
+                                echo "<button class='btn btn-danger btn-sm' onclick='hapusEvent(" . $row['event_id'] . ")'>Hapus</button>";
+                                echo "</td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='8'>Tidak ada data event.</td></tr>";
+                        }
+                    } catch(Exception $e) {
+                        echo "<tr><td colspan='8'>Kesalahan: " . $e->getMessage() . "</td></tr>";
                     }
-                }
-                ?>
-            </tbody>
-        </table>
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
         <!-- Navigasi untuk About Us -->
         <h2 class="mt-5">Navigasi Edit About Us</h2>
-        <a href="edit_about_us.php" class="btn btn-info">Edit About Us</a>
+        <a href="our-team.php" class="btn btn-info">Edit About Us</a>
     </div>
 
     <!-- Bootstrap 5.3 JS Bundle -->
@@ -96,21 +112,30 @@ if ($conn->connect_error) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
-        // Dummy data untuk grafik (ubah sesuai data dari database nanti)
-        const ctx = document.getElementById('chart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'],
-                datasets: [{
-                    label: 'Pengunjung',
-                    data: [10, 20, 30, 40, 50, 60], // Ganti data ini dengan data dari database
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2
-                }]
+        //fungsi pop-up hapus event
+        function hapusEvent(eventId) {
+            if (confirm('Yakin akan menghapus event ini?')) {
+                fetch('hapus-event.php', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
+                    body: new URLSearchParams({ event_id: eventId }) 
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Event berhasil dihapus');
+                        location.reload();
+                    } else {
+                        console.error('Kesalahan respons:', data);
+                        alert('Terjadi kesalahan saat menghapus event');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saat parsing JSON:', error);
+                    alert('Terjadi kesalahan saat memproses permintaan.');
+                });
             }
-        });
-
+        }
         // Simpan perubahan konten home
         document.querySelectorAll('.save-btn').forEach(button => {
             button.addEventListener('click', function () {

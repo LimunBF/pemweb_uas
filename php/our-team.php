@@ -79,7 +79,7 @@ session_start();
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body text-center">
-                        <h5 class="card-title">Dita Noviana Putri</h5>
+                        <h5 class="card-title">Dita Nofiana</h5>
                         <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                     </div>
                 </div>
