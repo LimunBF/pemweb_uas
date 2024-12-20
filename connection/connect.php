@@ -2,7 +2,7 @@
 function getDatabaseConnection() {
     // Konfigurasi database
     $host = 'localhost'; // Host database
-    $dbName = 'loket-com'; // Nama database
+    $dbName = 'loket_com'; // Nama database
     $username = 'root'; // Username database
     $password = ''; // Password database
 

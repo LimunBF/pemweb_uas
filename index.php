@@ -74,7 +74,7 @@
                                 <li class="dropdown-header">Profil Anda</li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
-                                <li><a class="dropdown-item" href="#">Informasi Dasar</a></li>
+                                <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
                                 <li><a class="dropdown-item" href="#">Pengaturan</a></li>
                                 <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
                             </ul>
