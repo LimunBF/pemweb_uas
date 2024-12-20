@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -17,6 +16,17 @@
     <?php 
         session_start(); 
         $isLoggedIn = isset($_SESSION['user_id']); 
+
+        // Include the database connection file
+        include 'connection/connect.php';
+
+        // Get the database connection
+        $pdo = getDatabaseConnection();
+
+        // Query to fetch events
+        $stmt = $pdo->prepare("SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events LIMIT 10");
+        $stmt->execute();
+        $events = $stmt->fetchAll();
     ?>
 
     <header>
@@ -25,7 +35,6 @@
             <div class="container-fluid">
                 <!-- Logo -->
                 <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
-
                 <!-- Search Bar -->
                 <div class="mx-auto" style="width: 40%;">
                     <div class="input-group">
@@ -40,24 +49,28 @@
                 <!-- Menu Kanan -->
                 <div class="d-flex align-items-center">
                     <!-- Buat Event -->
-                    <a href="#" class="icon-link">
+                    <a href="#" class="icon-link me-3">
                         <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="Buat Event">
                         Buat Event
                     </a>
 
                     <!-- Jelajah -->
-                    <a href="#" class="icon-link">
+                    <a href="#" class="icon-link me-3">
                         <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
                         Jelajah
                     </a>
 
-                    <!-- Profile Dropdown -->
-                    <div class="dropdown">
-                        <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <?php if ($isLoggedIn): ?>
+                    <?php if (!$isLoggedIn): ?>
+                        <!-- Daftar dan Masuk -->
+                        <a href="php/register.php" class="btn btn-outline-light me-2">Daftar</a>
+                        <a href="php/login.php" class="btn btn-primary">Masuk</a>
+                    <?php else: ?>
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown">
+                            <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li class="dropdown-header">Beralih ke akun</li>
                                 <li><a class="dropdown-item" href="#">Pembeli</a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -68,12 +81,9 @@
                                 <li><a class="dropdown-item" href="#">Pengaturan</a></li>
                                 <li><a class="dropdown-item" href="#">Rekening</a></li>
                                 <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
-                            <?php else: ?>
-                                <li><a class="dropdown-item" href="login.php">Masuk</a></li>
-                                <li><a class="dropdown-item" href="register.php">Daftar</a></li>
-                            <?php endif; ?>
-                        </ul>
-                    </div>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </nav>
@@ -120,57 +130,29 @@
         <!-- Event Pilihan Section -->
         <h3 class="fw-bold mb-4">Event Pilihan</h3>
         <div class="row g-4">
-            <!-- Event Card 1 -->
-            <div class="col-md-3">
-                <div class="card event-card">
-                    <img src="assets/images/event1.png" class="card-img-top" alt="Event 1">
-                    <div class="card-body">
-                        <h6 class="card-title fw-bold">WHISKY LIVE JAKARTA 2025</h6>
-                        <p class="card-text mb-1 text-muted">01 Feb - 02 Feb 2025</p>
-                        <p class="fw-bold mb-2">Rp350.000</p>
-                        <small class="text-muted">Caledonia Live</small>
+            <?php if (!empty($events)): ?>
+                <?php foreach ($events as $event): ?>
+                    <div class="col-md-3">
+                        <div class="card event-card">
+                            <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" class="card-img-top" alt="Event Image">
+                            <div class="card-body">
+                                <h6 class="card-title fw-bold"><?php echo htmlspecialchars($event['title']); ?></h6>
+                                <p class="card-text mb-1 text-muted">
+                                    <?php echo date('d M Y', strtotime($event['event_date'])); ?>
+                                </p>
+                                <p class="fw-bold mb-2">
+                                    <?php echo htmlspecialchars($event['location']); ?>
+                                </p>
+                                <small class="text-muted">
+                                    <?php echo htmlspecialchars($event['organizer_name']); ?>
+                                </small>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Event Card 2 -->
-            <div class="col-md-3">
-                <div class="card event-card">
-                    <img src="assets/images/event2.png" class="card-img-top" alt="Event 2">
-                    <div class="card-body">
-                        <h6 class="card-title fw-bold">CINTA KALA SENJA - BERNADYA</h6>
-                        <p class="card-text mb-1 text-muted">18 Dec 2024</p>
-                        <p class="fw-bold mb-2">Rp299.000</p>
-                        <small class="text-muted">Bengkel Space</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Event Card 3 -->
-            <div class="col-md-3">
-                <div class="card event-card">
-                    <img src="assets/images/event3.png" class="card-img-top" alt="Event 3">
-                    <div class="card-body">
-                        <h6 class="card-title fw-bold">HOLIMOON 2024</h6>
-                        <p class="card-text mb-1 text-muted">23 Dec 2024</p>
-                        <p class="fw-bold mb-2">Rp125.000</p>
-                        <small class="text-muted">Deal Indonesia</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Event Card 4 -->
-            <div class="col-md-3">
-                <div class="card event-card">
-                    <img src="assets/images/event4.png" class="card-img-top" alt="Event 4">
-                    <div class="card-body">
-                        <h6 class="card-title fw-bold">Carnival 2024</h6>
-                        <p class="card-text mb-1 text-muted">31 Dec 2024 - 01 Jan 2025</p>
-                        <p class="fw-bold mb-2">Rp200.000</p>
-                        <small class="text-muted">PT Bintan Resort Cakrawala</small>
-                    </div>
-                </div>
-            </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-muted">Tidak ada event tersedia saat ini.</p>
+            <?php endif; ?>
         </div>
 
         <!-- Top Events Section -->

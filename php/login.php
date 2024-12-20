@@ -3,20 +3,12 @@ session_start();
 
 // Periksa apakah form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Ganti dengan kredensial database Anda
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "loket_com";
+    include '../connection/connect.php';
+    $pdo = getDatabaseConnection();
 
     try {
-        // Membuat koneksi menggunakan PDO
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        // Atur mode error PDO ke exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         // Siapkan dan eksekusi pernyataan
-        $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->bindParam(':email', $_POST['email']);
         $stmt->execute();
 
@@ -49,19 +41,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistem Informasi</title>
-    <!-- Bootstrap CSS -->
+    <title>Login - Lokét</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #0b2341;
+            border-color: #0b2341;
+        }
+        .btn-primary:hover {
+            background-color: #031125;
+            border-color: #031125;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navbar (sama seperti di template) -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Sistem Informasi</a>
+            <a class="navbar-brand fw-bold" href="../index.php">LOKÉT</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -82,8 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </nav>
 
     <!-- Form Login -->
-    <div class="container my-5">
-        <h2 class="text-center">Login</h2>
+    <div class="login-container">
+        <h2 class="text-center mb-4">Masuk ke Akun Anda</h2>
         <?php if (isset($error)) { ?>
             <div class="alert alert-danger" role="alert">
                 <?php echo $error; ?>
@@ -98,19 +111,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password" class="form-label">Kata Sandi</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Masuk</button>
+            <button type="submit" class="btn btn-primary w-100">Masuk</button>
         </form>
-        <p class="mt-3">Belum punya akun? <a href="register.php">Daftar di sini</a></p>
+        <p class="mt-3 text-center">Belum punya akun? <a href="register.php">Daftar di sini</a></p>
     </div>
 
-    <!-- Footer (sama seperti di template) -->
-    <footer class="bg-light text-center py-4">
-        <p class="mb-0">
-            <a href="our-team.php" class="text-dark">© 2024 Sistem Informasi. All Rights Reserved.</a>
-        </p>
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p class="mb-0">&copy; 2024 Lokét. Semua Hak Dilindungi.</p>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
