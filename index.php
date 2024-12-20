@@ -14,6 +14,11 @@
 </head>
 
 <body>
+    <?php 
+        session_start(); 
+        $isLoggedIn = isset($_SESSION['user_id']); 
+    ?>
+
     <header>
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark">
@@ -27,8 +32,7 @@
                         <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
                             id="searchInput" aria-label="Search">
                         <button class="btn btn-primary" type="button">
-                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16"
-                                height="16">
+                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
                         </button>
                     </div>
                 </div>
@@ -49,36 +53,30 @@
 
                     <!-- Profile Dropdown -->
                     <div class="dropdown">
-                        <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <li class="dropdown-header">Beralih ke akun</li>
-                            <li><a class="dropdown-item" href="#">Pembeli</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Dashboard</a></li>
-                            <li><a class="dropdown-item" href="#">Event Saya</a></li>
-                            <li><a class="dropdown-item" href="#">Informasi Dasar</a></li>
-                            <li><a class="dropdown-item" href="#">Pengaturan</a></li>
-                            <li><a class="dropdown-item" href="#">Rekening</a></li>
-                            <li><a class="dropdown-item text-danger" href="#">Keluar</a></li>
+                            <?php if ($isLoggedIn): ?>
+                                <li class="dropdown-header">Beralih ke akun</li>
+                                <li><a class="dropdown-item" href="#">Pembeli</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Profil Saya</a></li>
+                                <li><a class="dropdown-item" href="#">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="#">Event Saya</a></li>
+                                <li><a class="dropdown-item" href="#">Informasi Dasar</a></li>
+                                <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                                <li><a class="dropdown-item" href="#">Rekening</a></li>
+                                <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
+                            <?php else: ?>
+                                <li><a class="dropdown-item" href="login.php">Masuk</a></li>
+                                <li><a class="dropdown-item" href="register.php">Daftar</a></li>
+                            <?php endif; ?>
                         </ul>
                     </div>
                 </div>
             </div>
         </nav>
-        <!-- Hashtags -->
-        <div class="py-2 bg-dark text-center">
-            <a href="#" class="text-light text-decoration-none mx-2">#Promo_Indodana</a>
-            <a href="#" class="text-light text-decoration-none mx-2">#LOKETScreen</a>
-            <a href="#" class="text-light text-decoration-none mx-2">#LOKET_Promo</a>
-            <a href="#" class="text-light text-decoration-none mx-2">#LoketAttraction</a>
-            <a href="#" class="text-light text-decoration-none mx-2">#CigarettesAfterSex</a>
-            <a href="#" class="text-light text-decoration-none mx-2">#KeshiTour</a>
-        </div>
     </header>
 
     <div class="container py-4">
