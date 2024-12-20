@@ -1,22 +1,7 @@
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-}
-
 /* Gradient Box */
 .gradient-box {
     background: linear-gradient(to bottom right, #f8b9c8, #8a8dc9);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Header */
-header .logo {
-    font-weight: bold;
 }
 
 /* Responsive Styles */
@@ -24,10 +9,6 @@ header .logo {
     nav {
         display: none;
     }
-}
-
-h1, h3 {
-    margin: 0;
 }
 
 .shadow {
@@ -42,18 +23,9 @@ main {
     flex: 1; /* Membuat konten utama mengisi sisa ruang di antara header dan footer */
 }
 
-footer {
-    color: white;
-    text-align: center;
-}
-
 .bg-primary {
     background-color: #3c4c8c !important; /* Menimpa warna default Bootstrap */
     color: white !important; /* Warna teks tetap putih */
-}
-
-nav a {
-    font-size: 0.5rem; /* Ukuran font lebih kecil untuk navigasi */
 }
 
 /* Gradient Background untuk tombol "Beli Tiket" */

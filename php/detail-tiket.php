@@ -1,3 +1,12 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Periksa apakah pengguna sudah login
+$isLoggedIn = isset($_SESSION['user_id']); // Cek apakah sesi user_id ada
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,74 +17,82 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../css/navbar_footer.css">
+    <link rel="stylesheet" type="text/css" href="../css/home.css">
+    <link rel="stylesheet" href="../css/detail-tiket.css">
 
-    <!-- Custom CSS -->
-    <style>
-        .nav-tabs .nav-link {
-            color: #3c4c8c;
-            font-weight: bold;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #3c4c8c;
-            color: #fff;
-        }
-        .tab-content {
-            border: 1px solid #dee2e6;
-            padding: 20px;
-            border-radius: 0 0 5px 5px;
-        }
-        .bg-payment {
-            background-color: #f8d7da;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .bg-primary {
-            background-color: #3c4c8c !important; /* Menimpa warna default Bootstrap */
-            color: white !important; /* Warna teks tetap putih */
-        }
-        /* Gradient Background untuk tombol "Beli Tiket" */
-        .btn-gradient {
-            background: linear-gradient(to top right, #3c4c8c, #ecddd9, #f1b0bb); /* Gradasi awal */
-            color: white; /* Warna teks putih */
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            transition: background-position 0.3s ease, color 0.3s ease; /* Transisi untuk posisi latar belakang dan warna teks */
-            background-size: 200% 200%; /* Mengatur ukuran latar belakang untuk efek pergerakan */
-            background-position: bottom left; /* Posisi awal latar belakang */
-        }
-        /* Hover Effect: Gradasi bergerak dan berubah menjadi #3c4c8c */
-        .btn-gradient:hover {
-            background-position: top right; /* Menggerakkan latar belakang saat hover */
-            background: linear-gradient(to top right, #3c4c8c, #3c4c8c, #3c4c8c); /* Gradasi berubah menjadi satu warna */
-            color: #ecddd9; /* Warna teks saat hover */
-        }
-        /* Gradient Background untuk tombol "Beli Tiket" */
-        .btn-gradient2 {
-            background: linear-gradient(to top right, #FFFFFF, #FFFFFF, #FFFFFF); /* Gradasi awal */
-            color: black;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            transition: background-position 0.3s ease, color 0.3s ease; /* Transisi untuk posisi latar belakang dan warna teks */
-            background-size: 200% 200%; /* Mengatur ukuran latar belakang untuk efek pergerakan */
-            background-position: bottom left; /* Posisi awal latar belakang */
-        }
-        .btn-gradient2:hover {
-            background-position: top right; /* Menggerakkan latar belakang saat hover */
-            background: linear-gradient(to top right, #3c4c8c, #ecddd9, #f1b0bb); /* Gradasi berubah menjadi satu warna */
-            color: #FFFFFF; /* Warna teks saat hover */
-        }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<!-- HEADER -->
-<header class="bg-primary text-white py-3">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="h4 fw-bold mb-0">EVENTURE</div>
-        <div id="currentPage" class="fw-normal fs-5">Pilih Tiket</div>
-    </div>
+<!--KONEKSI KE DATABASE-->
+<?php
+// Sertakan file koneksi
+include '../connection/connect.php';
+
+try {
+    // Mendapatkan koneksi database
+    $pdo = getDatabaseConnection();
+} catch (PDOException $e) {
+    die("Koneksi gagal: " . $e->getMessage());
+}
+?>
+
+<!-- HEADER DAN NAVIGASI -->
+<header>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
+                <!-- Search Bar -->
+                <div class="mx-auto" style="width: 40%;">
+                    <div class="input-group">
+                        <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
+                            id="searchInput" aria-label="Search">
+                        <button class="btn btn-primary" type="button">
+                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Kanan -->
+                <div class="d-flex align-items-center">
+                    <!-- Buat Event -->
+                    <a href="#" class="icon-link me-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="Buat Event">
+                        Buat Event
+                    </a>
+
+                    <!-- Jelajah -->
+                    <a href="#" class="icon-link me-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
+                        Jelajah
+                    </a>
+
+                    <?php if (!$isLoggedIn): ?>
+                        <!-- Daftar dan Masuk -->
+                        <a href="../php/register.php" class="btn btn-outline-light me-2">Daftar</a>
+                        <a href="../php/login.php" class="btn btn-primary">Masuk</a>
+                    <?php else: ?>
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown">
+                            <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li class="dropdown-header">Profil Anda</li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
+                                <li><a class="dropdown-item" href="#">Informasi Dasar</a></li>
+                                <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                                <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </nav>
 </header>
 
 <!-- MAIN CONTENT -->
@@ -183,107 +200,48 @@
 </main>
 
 <!-- FOOTER -->
-<footer class="bg-primary text-white py-3 text-center">
-    <p class="mb-0">&copy; 2024 EVENTURE. All rights reserved.</p>
+<footer>
+        <div class="footer">
+            <!-- Keamanan dan Privasi -->
+            <h5 class="text-white mb-3">Keamanan dan Privasi</h5>
+            <img src="assets/images/logo_bsi.png" alt="Logo BSI" class="mb-4">
+
+            <!-- Social Media Icons -->
+            <div class="footer-icons">
+                <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
+                <a href="#" target="_blank"><i class="bi bi-tiktok"></i></a>
+                <a href="#" target="_blank"><i class="bi bi-x"></i></a>
+                <a href="#" target="_blank"><i class="bi bi-linkedin"></i></a>
+                <a href="#" target="_blank"><i class="bi bi-youtube"></i></a>
+                <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
+            </div>
+        </div>
+
+        <!-- Footer Bottom Section -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div div class="d-inline-flex flex-wrap justify-content-center align-items-center" style="gap: 10px;">
+                    <a href="php/our-team.php" style="text-decoration: none; color: #d1d9e6;">Tentang Kami</a>
+                    <span>•</span>
+                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Blog</a>
+                    <span>•</span>
+                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Kebijakan Privasi</a>
+                    <span>•</span>
+                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Kebijakan Cookie</a>
+                    <span>•</span>
+                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Panduan</a>
+                    <span>•</span>
+                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Hubungi Kami</a>
+                </div>
+                <p class="mb-0 mt-2">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
+            </div>
+        </div>
 </footer>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Custom JS -->
-<script>
-    const jumlahTiket1 = document.getElementById('jumlahTiket1');
-    const jumlahTiket2 = document.getElementById('jumlahTiket2');
-    const daftarTiket = document.querySelector('.list-unstyled');
-    const totalHarga = document.querySelector('.fs-5 span');
-
-    const hargaTiket1 = 500000; // Harga Tiket 1
-    const hargaTiket2 = 750000; // Harga Tiket 2
-
-    function updateDaftarTiket() {
-        const jumlah1 = parseInt(jumlahTiket1.value);
-        const jumlah2 = parseInt(jumlahTiket2.value);
-
-        // Kosongkan daftar tiket
-        daftarTiket.innerHTML = '';
-
-        let total = 0;
-
-        // Tambahkan tiket 1 jika jumlahnya lebih dari 0
-        if (jumlah1 > 0) {
-            daftarTiket.innerHTML += `
-                <li class="mb-2">Jenis Tiket 1: <strong>${jumlah1}</strong> x Rp ${hargaTiket1.toLocaleString('id-ID')}</li>
-            `;
-            total += jumlah1 * hargaTiket1;
-        }
-
-        // Tambahkan tiket 2 jika jumlahnya lebih dari 0
-        if (jumlah2 > 0) {
-            daftarTiket.innerHTML += `
-                <li class="mb-2">Jenis Tiket 2: <strong>${jumlah2}</strong> x Rp ${hargaTiket2.toLocaleString('id-ID')}</li>
-            `;
-            total += jumlah2 * hargaTiket2;
-        }
-
-        // Update total harga
-        totalHarga.textContent = `Rp ${total.toLocaleString('id-ID')}`;
-    }
-
-    // Event listener untuk mendeteksi perubahan dropdown
-    jumlahTiket1.addEventListener('change', updateDaftarTiket);
-    jumlahTiket2.addEventListener('change', updateDaftarTiket);
-
-    // Inisialisasi daftar tiket pada saat halaman pertama kali dimuat
-    updateDaftarTiket();
-
-    const btnCheckout = document.getElementById('btnCheckout');
-    const btnKonfirmasi = document.getElementById('btnKonfirmasi');
-    const btnPembayaran = document.getElementById('btnPembayaran');
-    const emailInput = document.getElementById('email');
-    const emailKonfirmasi = document.getElementById('emailKonfirmasi');
-    const tabs = document.querySelectorAll('.nav-link');
-    const currentPage = document.getElementById('currentPage');
-
-    btnCheckout.addEventListener('click', () => {
-        const jumlah1 = parseInt(jumlahTiket1.value);
-        const jumlah2 = parseInt(jumlahTiket2.value);
-
-        // Validasi apakah ada tiket yang dipilih
-        if (jumlah1 === 0 && jumlah2 === 0) {
-            alert('Pilih setidaknya satu tiket sebelum melanjutkan.');
-            return;
-        }
-
-        document.querySelector('#biodata-tab').disabled = false;
-        document.querySelector('#biodata-tab').click();
-    });
-
-    btnKonfirmasi.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        // Validasi email sebelum melanjutkan
-        if (!emailInput.value) {
-            alert('Masukkan email terlebih dahulu.');
-            return;
-        }
-
-        emailKonfirmasi.textContent = emailInput.value;
-        document.querySelector('#konfirmasi-tab').disabled = false;
-        document.querySelector('#konfirmasi-tab').click();
-    });
-
-    btnPembayaran.addEventListener('click', () => {
-        document.querySelector('#pembayaran-tab').disabled = false;
-        document.querySelector('#pembayaran-tab').click();
-    });
-
-    // Fungsi untuk mengganti nama halaman
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            currentPage.textContent = tab.textContent; // Ubah teks header sesuai tab
-        });
-    });
-</script>
+<script src="../javascript/navbar.js"></script>
+<script src="../javascript/detail-tiket.js"></script>
 
 </body>
 </html>
