@@ -71,15 +71,11 @@
                                 <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <li class="dropdown-header">Beralih ke akun</li>
-                                <li><a class="dropdown-item" href="#">Pembeli</a></li>
+                                <li class="dropdown-header">Profil Anda</li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Profil Saya</a></li>
-                                <li><a class="dropdown-item" href="#">Dashboard</a></li>
-                                <li><a class="dropdown-item" href="#">Event Saya</a></li>
+                                <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
                                 <li><a class="dropdown-item" href="#">Informasi Dasar</a></li>
                                 <li><a class="dropdown-item" href="#">Pengaturan</a></li>
-                                <li><a class="dropdown-item" href="#">Rekening</a></li>
                                 <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
                             </ul>
                         </div>
