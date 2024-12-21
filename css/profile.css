@@ -9,7 +9,6 @@ body {
     margin-right: auto;
     margin: 0 40px;
 }
-
 .profile-container {
     max-width: 90%;
     margin: 30px auto;
@@ -112,7 +111,7 @@ body {
     align-items: center;
     cursor: pointer;
     position: relative;
-    transform: translateX(-35%); /* Moves it 10px to the left */
+    transform: translateX(-10%); /* Moves it 10px to the left */
 }
 
 .dropdown-profile:hover {
@@ -264,4 +263,88 @@ input:focus {
     100% {
         background-color: #ffffff;
     }
+}
+
+.setting-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #eef3fc;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.setting-header {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.setting-description {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.setting-toggle input[type="checkbox"] {
+    transform: scale(1.5);
+}
+
+.setting-action i {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.setting-action i:hover {
+    color: #dc3545;
+}
+
+.close-account-container {
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.close-account-container h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.close-account-container ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 15px;
+}
+
+.close-account-container button {
+    background-color: #e0e0e0;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    cursor: not-allowed;
+    transition: background-color 0.3s ease;
+}
+
+.close-account-container button.enabled {
+    cursor: pointer;
+    background-color: #007bff;
+}
+
+.close-account-container button.enabled:hover {
+    background-color: #0056b3;
+}
+
+.sidebar a.active {
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+.sidebar a.active:hover {
+    background-color: #0056b3;
 }

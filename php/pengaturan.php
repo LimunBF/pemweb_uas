@@ -18,7 +18,30 @@ $stmt->bindParam(':user_id', $user_id);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User';
+$dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'Profil Anda';
+
+// Tentukan halaman aktif untuk highlight
+$current_page = basename($_SERVER['PHP_SELF']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
+    // Hapus akun dari database
+    $deleteStmt = $pdo->prepare("DELETE FROM users WHERE user_id = :user_id");
+    $deleteStmt->bindParam(':user_id', $user_id);
+    if ($deleteStmt->execute()) {
+        // Logout dan redirect dengan delay ke halaman utama
+        session_destroy();
+        echo "<script>
+            alert('Akun berhasil dihapus. Anda akan dialihkan ke halaman utama.');
+            setTimeout(() => {
+                window.location.href = '../index.php';
+            }, 2000);
+            
+        </script>";
+        exit();
+    } else {
+        $error_message = "Gagal menghapus akun. Silakan coba lagi nanti.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -38,79 +61,7 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        .setting-item {
-            padding: 15px;
-            margin-bottom: 10px;
-            background-color: #eef3fc;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .setting-header {
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .setting-description {
-            font-size: 14px;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-
-        .setting-toggle input[type="checkbox"] {
-            transform: scale(1.5);
-        }
-
-        .setting-action i {
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .setting-action i:hover {
-            color: #dc3545;
-        }
-
-        .close-account-container {
-            padding: 20px;
-            background-color: #ffffff;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .close-account-container h3 {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .close-account-container ul {
-            list-style-type: disc;
-            padding-left: 20px;
-            margin-bottom: 15px;
-        }
-
-        .close-account-container button {
-            background-color: #e0e0e0;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: not-allowed;
-            transition: background-color 0.3s ease;
-        }
-
-        .close-account-container button.enabled {
-            cursor: pointer;
-            background-color: #007bff;
-        }
-
-        .close-account-container button.enabled:hover {
-            background-color: #0056b3;
-        }
+        
     </style>
 </head>
 
@@ -139,14 +90,23 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
         <div class="logo">
             <i class="bi bi-house"></i><span>LOKÉT</span>
         </div>
-        <a href="../index.php"><i class="bi bi-house"></i><span>Jelajah Event</span></a>
-        <a href="#"><i class="bi bi-ticket-perforated"></i><span>Tiket Saya</span></a>
-        <a href="profile.php"><i class="bi bi-person"></i><span>Informasi Dasar</span></a>
-        <a href="pengaturan.php"><i class="bi bi-gear"></i><span>Pengaturan</span></a>
+        <a href="../index.php" class="<?php echo $current_page == 'index.php' ? 'active' : ''; ?>">
+            <i class="bi bi-house"></i><span>Jelajah Event</span>
+        </a>
+        <a href="#" class="<?php echo $current_page == 'tickets.php' ? 'active' : ''; ?>">
+            <i class="bi bi-ticket-perforated"></i><span>Tiket Saya</span>
+        </a>
+        <a href="profile.php" class="<?php echo $current_page == 'profile.php' ? 'active' : ''; ?>">
+            <i class="bi bi-person"></i><span>Informasi Dasar</span>
+        </a>
+        <a href="pengaturan.php" class="<?php echo $current_page == 'pengaturan.php' ? 'active' : ''; ?>">
+            <i class="bi bi-gear"></i><span>Pengaturan</span>
+        </a>
         <button class="toggle-button" onclick="toggleSidebar()">
             <i class="bi bi-chevron-left text-white"></i><span>Shrink</span>
         </button>
     </div>
+
 
     <div class="content-container">
         <h2 class="content-header">Profil Kamu</h2>
@@ -167,60 +127,22 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
                     <li>Keterlibatan dari kampanye promosi</li>
                     <li>Bagi event creator, riwayat eventmu akan hilang setelah penutupan akun</li>
                 </ul>
-                <div>
-                    <input type="checkbox" id="agreeCloseAccount" onclick="toggleCloseButton()">
-                    <label for="agreeCloseAccount">Saya dengan sadar setuju untuk menutup akun.</label>
-                </div>
-                <button id="confirmCloseAccount" class="disabled">Tutup Akun</button>
+                <form method="POST">
+                    <div>
+                        <input type="checkbox" id="agreeCloseAccount" onclick="toggleCloseButton()">
+                        <label for="agreeCloseAccount">Saya dengan sadar setuju untuk menutup akun.</label>
+                    </div>
+                    <button id="confirmCloseAccount" class="disabled" name="delete_account" disabled>Tutup Akun</button>
+                </form>
+                <?php if (!empty($error_message)) : ?>
+                    <div class="alert alert-danger mt-3"> <?php echo $error_message; ?> </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-    function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        const content = document.querySelector('.content-container');
-        sidebar.classList.toggle('shrink');
-        content.classList.toggle('shrink');
-    }
-
-    function showCloseAccount() {
-        const closeAccountContainer = document.getElementById('closeAccount');
-        const settingItem = document.querySelector('.setting-item');
-        closeAccountContainer.style.display = 'block';
-        if (settingItem) {
-            settingItem.style.display = 'none';
-        }
-    }
-
-    function toggleCloseButton() {
-        const agreeCheckbox = document.getElementById('agreeCloseAccount');
-        const closeButton = document.getElementById('confirmCloseAccount');
-        if (agreeCheckbox.checked) {
-            closeButton.classList.add('enabled');
-            closeButton.classList.remove('disabled');
-            closeButton.style.cursor = 'pointer';
-            closeButton.disabled = false;
-        } else {
-            closeButton.classList.remove('enabled');
-            closeButton.classList.add('disabled');
-            closeButton.style.cursor = 'not-allowed';
-            closeButton.disabled = true;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const logoutLink = document.querySelector('.text-danger');
-        if (logoutLink) {
-            logoutLink.addEventListener('click', (e) => {
-                if (!confirm("Apakah Anda yakin ingin keluar?")) {
-                    e.preventDefault();
-                }
-            });
-        }
-    });
-    </script>
+    <script src="../javascript/profile.js"></script>
 </body>
 
 </html>

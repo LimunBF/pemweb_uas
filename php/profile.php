@@ -75,7 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User';
+$dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'Profil Anda';
+
+// Tentukan halaman aktif untuk highlight
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!DOCTYPE html>
@@ -115,10 +118,18 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
         <div class="logo">
             <i class="bi bi-house"></i><span>LOKÉT</span>
         </div>
-        <a href="../index.php"><i class="bi bi-house"></i><span>Jelajah Event</span></a>
-        <a href="#"><i class="bi bi-ticket-perforated"></i><span>Tiket Saya</span></a>
-        <a href="profile.php"><i class="bi bi-person"></i><span>Informasi Dasar</span></a>
-        <a href="pengaturan.php"><i class="bi bi-gear"></i><span>Pengaturan</span></a>
+        <a href="../index.php" class="<?php echo $current_page == 'index.php' ? 'active' : ''; ?>">
+            <i class="bi bi-house"></i><span>Jelajah Event</span>
+        </a>
+        <a href="#" class="<?php echo $current_page == 'tickets.php' ? 'active' : ''; ?>">
+            <i class="bi bi-ticket-perforated"></i><span>Tiket Saya</span>
+        </a>
+        <a href="profile.php" class="<?php echo $current_page == 'profile.php' ? 'active' : ''; ?>">
+            <i class="bi bi-person"></i><span>Informasi Dasar</span>
+        </a>
+        <a href="pengaturan.php" class="<?php echo $current_page == 'pengaturan.php' ? 'active' : ''; ?>">
+            <i class="bi bi-gear"></i><span>Pengaturan</span>
+        </a>
         <button class="toggle-button" onclick="toggleSidebar()">
             <i class="bi bi-chevron-left text-white"></i><span>Shrink</span>
         </button>
@@ -150,7 +161,7 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
                     <input type="text" class="form-control" id="ktp_number" name="ktp_number"
                         value="<?php echo htmlspecialchars($user['ktp_number']); ?>">
                 </div>
-                <div class="mb-3">
+                <div class="mb-3">  
                     <label for="date_of_birth" class="form-label">Tanggal Lahir</label>
                     <input type="date" class="form-control custom-date-picker" id="date_of_birth" name="date_of_birth"
                         value="<?php echo htmlspecialchars($user['date_of_birth']); ?>">
@@ -170,25 +181,7 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-    function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        const content = document.querySelector('.content-container');
-        sidebar.classList.toggle('shrink');
-        content.classList.toggle('shrink');
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const logoutLink = document.querySelector('.text-danger');
-        if (logoutLink) {
-            logoutLink.addEventListener('click', (e) => {
-                if (!confirm("Apakah Anda yakin ingin keluar?")) {
-                    e.preventDefault();
-                }
-            });
-        }
-    });
-    </script>
+    <script src="../javascript/profile.js"></script>
 </body>
 
 </html>
