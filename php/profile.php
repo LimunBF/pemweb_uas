@@ -338,7 +338,7 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
                 <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile">
                 <span><?php echo $dropdownName; ?></span>
                 <div class="dropdown-menu">
-                    <a href="../index.php">Jelajah <i class="bi bi-chevron-right"></i></a>
+                    <a href="/pemweb_uas/index.php">Jelajah <i class="bi bi-chevron-right"></i></a>
                     <a href="#">Tiket Saya <i class="bi bi-chevron-right"></i></a>
                     <a href="profile.php">Informasi Dasar <i class="bi bi-chevron-right"></i></a>
                     <a href="#">Pengaturan <i class="bi bi-chevron-right"></i></a>

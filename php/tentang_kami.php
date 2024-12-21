@@ -72,7 +72,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <!-- Logo -->
-            <a class="navbar-brand fw-bold" href="index.php">LOKÉT</a>
+            <a class="navbar-brand fw-bold" href="/pemweb_uas/index.php">LOKÉT</a>
 
             <!-- Search Bar -->
             <div class="mx-auto" style="width: 40%;">

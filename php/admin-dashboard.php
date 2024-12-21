@@ -47,10 +47,9 @@ if ($conn->connect_error) {
     </header>
 
     <div class="container my-4">
-        <h1 class="mb-4">Selamat Datang, Admin</h1>
+        <h1 class="mb-4">Selamat Datang, Admin</h1><br>
 
         <!-- Grafik Dinamis -->
-        <h2>Statistik</h2>
         <div class="mb-4">
             <h3>Tiket Terlaris</h3>
             <canvas id="topTicketsChart" style="width: 100%; height: 400px;"></canvas>
@@ -62,7 +61,7 @@ if ($conn->connect_error) {
 
         <!-- Tabel Konten Home -->
         <div class="container mt-5">
-            <h2>Data Event</h2>
+            <h3>Data Event</h3>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -201,7 +200,7 @@ if ($conn->connect_error) {
 
             // Dummy data untuk Penjualan Bulanan
             const monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const monthlyData = [300, 400, 350, 500, 450, 600, 550, 700, 650, 800, 750, 900]; // Data dummy, ganti dengan data dari database
+            const monthlyData = [300, 400, 350, 500, 450, 600, 550, 700, 400, 800, 750, 900]; // Data dummy, ganti dengan data dari database
 
             const ctxMonthlySales = document.getElementById('monthlySalesChart').getContext('2d');
             const monthlySalesChart = new Chart(ctxMonthlySales, {
