@@ -55,7 +55,7 @@
                     </a>
 
                     <!-- Jelajah -->
-                    <a href="#" class="icon-link me-3">
+                    <a href="jelajah.php" class="icon-link me-3">
                         <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
                         Jelajah
                     </a>
