@@ -1,0 +1,127 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: #0b2341;
+}
+
+.navbar-brand {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.navbar-brand:hover {
+    color: #d1d9e6;
+}
+
+.navbar .btn-danger {
+    background-color: #d9534f;
+    border: none;
+}
+
+.navbar .btn-danger:hover {
+    background-color: #c9302c;
+}
+
+/* Header Styling */
+header {
+    margin-bottom: 20px;
+}
+
+/* Content Styling */
+h1, h2, h3 {
+    color: #0b2341;
+}
+
+table {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+table th {
+    background-color: #152c52;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+}
+
+table td {
+    padding: 10px;
+    text-align: center;
+    color: #333;
+}
+
+.btn {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+}
+
+.btn-warning {
+    background-color: #f0ad4e;
+    border: none;
+}
+
+.btn-warning:hover {
+    background-color: #ec971f;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+}
+
+.btn-info {
+    background-color: #5bc0de;
+    border: none;
+}
+
+.btn-info:hover {
+    background-color: #31b0d5;
+}
+
+/* Chart Styling */
+canvas {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer Styling */
+.footer {
+    background-color: #0b2341;
+    color: #a0b8d8;
+    text-align: center;
+    padding: 20px;
+}
+
+.footer a {
+    color: #a0b8d8;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    table {
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        font-size: 0.8rem;
+    }
+}
