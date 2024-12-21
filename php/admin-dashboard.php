@@ -51,7 +51,14 @@ if ($conn->connect_error) {
 
         <!-- Grafik Dinamis -->
         <h2>Statistik</h2>
-        <canvas id="chart" style="width: 100%; height: 400px;"></canvas>
+        <div class="mb-4">
+            <h3>Tiket Terlaris</h3>
+            <canvas id="topTicketsChart" style="width: 100%; height: 400px;"></canvas>
+        </div>
+        <div class="mb-4">
+            <h3>Penjualan Bulanan</h3>
+            <canvas id="monthlySalesChart" style="width: 100%; height: 400px;"></canvas>
+        </div>
 
         <!-- Tabel Konten Home -->
         <div class="container mt-5">
@@ -104,7 +111,7 @@ if ($conn->connect_error) {
 
         <!-- Navigasi untuk About Us -->
         <h2 class="mt-5">Navigasi Edit About Us</h2>
-        <a href="our-team.php" class="btn btn-info">Edit About Us</a>
+        <a href="tentang_kami.php" class="btn btn-info">Edit About Us</a>
     </div>
 
     <!-- Bootstrap 5.3 JS Bundle -->
@@ -158,6 +165,71 @@ if ($conn->connect_error) {
                         alert('Terjadi kesalahan saat menyimpan perubahan');
                     }
                 });
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            // Dummy data untuk Tiket Terlaris
+            const ticketLabels = ['Tiket A', 'Tiket B', 'Tiket C', 'Tiket D', 'Tiket E'];
+            const ticketData = [120, 80, 150, 90, 60]; // Data dummy, ganti dengan data dari database
+
+            const ctxTopTickets = document.getElementById('topTicketsChart').getContext('2d');
+            const topTicketsChart = new Chart(ctxTopTickets, {
+                type: 'bar',
+                data: {
+                    labels: ticketLabels,
+                    datasets: [{
+                        label: 'Tiket Terjual',
+                        data: ticketData,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Dummy data untuk Penjualan Bulanan
+            const monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthlyData = [300, 400, 350, 500, 450, 600, 550, 700, 650, 800, 750, 900]; // Data dummy, ganti dengan data dari database
+
+            const ctxMonthlySales = document.getElementById('monthlySalesChart').getContext('2d');
+            const monthlySalesChart = new Chart(ctxMonthlySales, {
+                type: 'line',
+                data: {
+                    labels: monthlyLabels,
+                    datasets: [{
+                        label: 'Penjualan Bulanan',
+                        data: monthlyData,
+                        borderColor: '#FF6384',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
             });
         });
     </script>
