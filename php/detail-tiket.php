@@ -65,7 +65,7 @@ try {
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
                 <!-- Logo -->
-                <a class="navbar-brand fw-bold" href="/pemweb_uas/index.php">LOKÉT</a>
+                <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
                 <!-- Search Bar -->
                 <div class="mx-auto" style="width: 40%;">
                     <div class="input-group">
@@ -211,7 +211,7 @@ try {
                 </ul>
                 <hr class="bg-light">
                 <p class="fs-5 fw-bold">Total: <span>Rp 1.750.000</span></p>
-                <button class="btn btn-gradient2 w-100 mt-3">Checkout</button>
+                <button class="btn btn-gradient2 w-100 mt-3" id="btnBayar">Selesaikan Pembayaran</button>
             </div>
     </div>
     </div>
@@ -260,6 +260,43 @@ try {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../javascript/navbar.js"></script>
 <script src="../javascript/detail-tiket.js"></script>
+<script>
+    document.getElementById("btnBayar").addEventListener("click", function () {
+    const selectedTickets = [];
+    <?php foreach ($tickets as $ticket): ?>
+    const jumlahTiket<?php echo $ticket['ticket_id']; ?> = document.getElementById("jumlahTiket<?php echo $ticket['ticket_id']; ?>").value;
+    selectedTickets.push({
+        ticket_id: "<?php echo $ticket['ticket_id']; ?>",
+        quantity: jumlahTiket<?php echo $ticket['ticket_id']; ?>,
+    });
+    <?php endforeach; ?>
+
+    // Kirim data ke server menggunakan AJAX
+    fetch("../php/update_tickets.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            tickets: selectedTickets,
+        }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert("Pembayaran berhasil, stok tiket telah diperbarui!");
+                location.reload();
+            } else {
+                alert("Gagal memproses pembayaran: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("Terjadi kesalahan. Silakan coba lagi.");
+        });
+});
+
+</script>
 
 </body>
 </html>

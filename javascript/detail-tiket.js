@@ -43,6 +43,7 @@ const jumlahTiket1 = document.getElementById('jumlahTiket1');
     updateDaftarTiket();
 
     const btnCheckout = document.getElementById('btnCheckout');
+    const btnCheckout2 = document.getElementById('btnCheckout2');
     const btnKonfirmasi = document.getElementById('btnKonfirmasi');
     const btnPembayaran = document.getElementById('btnPembayaran');
     const emailInput = document.getElementById('email');
@@ -89,3 +90,6 @@ const jumlahTiket1 = document.getElementById('jumlahTiket1');
             currentPage.textContent = tab.textContent; // Ubah teks header sesuai tab
         });
     });
+
+    //TOMBOL CHECKOUT 2
+    
