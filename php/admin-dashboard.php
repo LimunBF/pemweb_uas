@@ -49,64 +49,101 @@ if ($conn->connect_error) {
     <div class="container my-4">
         <h1 class="mb-4">Selamat Datang, Admin</h1><br>
 
+        <h4>Data Event</h4>
+        <?php
+        // Variabel untuk pagination
+        $limit = 5; // Jumlah data per halaman
+        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Halaman saat ini
+        $offset = ($currentPage - 1) * $limit; // Hitung offset
+
+        try {
+            // Hitung total data
+            $sqlCount = "SELECT COUNT(*) as total FROM events";
+            $resultCount = $conn->query($sqlCount);
+            $totalData = $resultCount->fetch_assoc()['total'];
+            $totalPages = ceil($totalData / $limit); // Hitung jumlah halaman
+
+            // Ambil data sesuai halaman
+            $sql = "SELECT * FROM events LIMIT $limit OFFSET $offset";
+            $result = $conn->query($sql);
+        ?>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Event ID</th>
+                    <th>Title</th>
+                    <th>Event Date</th>
+                    <th>Location</th>
+                    <th>Organizer Name</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . $row['event_id'] . "</td>";
+                        echo "<td>" . $row['title'] . "</td>";
+                        echo "<td>" . $row['event_date'] . "</td>";
+                        echo "<td>" . $row['location'] . "</td>";
+                        echo "<td>" . $row['organizer_name'] . "</td>";
+                        echo "<td>";
+                        echo "<a href='edit-event.php?event_id=" . $row['event_id'] . "' class='btn btn-warning btn-sm me-2'>Edit</a>";
+                        echo "<button class='btn btn-danger btn-sm' onclick='hapusEvent(" . $row['event_id'] . ")'>Hapus</button>";
+                        echo "</td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='6'>Tidak ada data event.</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+
+        <!-- Navigasi Pagination -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                <?php if ($currentPage > 1): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">&laquo; Previous</a>
+                    </li>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <li class="page-item <?php echo ($i == $currentPage) ? 'active' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+
+                <?php if ($currentPage < $totalPages): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">Next &raquo;</a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+
+        <?php
+        } catch (Exception $e) {
+            echo "<div class='alert alert-danger'>Kesalahan: " . $e->getMessage() . "</div>";
+        }
+        ?>
+
         <!-- Grafik Dinamis -->
         <div class="mb-4">
-            <h3>Tiket Terlaris</h3>
+            <h4>Tiket Terlaris</h4>
             <canvas id="topTicketsChart" style="width: 100%; height: 400px;"></canvas>
         </div>
         <div class="mb-4">
-            <h3>Penjualan Bulanan</h3>
+            <h4>Penjualan Bulanan</h4>
             <canvas id="monthlySalesChart" style="width: 100%; height: 400px;"></canvas>
         </div>
 
-        <!-- Tabel Konten Home -->
         <div class="container mt-5">
-            <h3>Data Event</h3>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Event ID</th>
-                        <th>Title</th>
-                        <th>Event Date</th>
-                        <th>Location</th>
-                        <th>Organizer Name</th>
-                        <th>Created At</th>
-                        <th>Updated At</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    try {
-                        // Gunakan koneksi yang sama
-                        $sql = "SELECT * FROM events";
-                        $result = $conn->query($sql);
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<tr>";
-                                echo "<td>" . $row['event_id'] . "</td>";
-                                echo "<td>" . $row['title'] . "</td>";
-                                echo "<td>" . $row['event_date'] . "</td>";
-                                echo "<td>" . $row['location'] . "</td>";
-                                echo "<td>" . $row['organizer_name'] . "</td>";
-                                echo "<td>" . $row['created_at'] . "</td>";
-                                echo "<td>" . $row['updated_at'] . "</td>";
-                                echo "<td>";
-                                echo "<a href='edit_detail.php?event_id=" . $row['event_id'] . "' class='btn btn-warning btn-sm me-2'>Edit</a>";
-                                echo "<button class='btn btn-danger btn-sm' onclick='hapusEvent(" . $row['event_id'] . ")'>Hapus</button>";
-                                echo "</td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='8'>Tidak ada data event.</td></tr>";
-                        }
-                    } catch(Exception $e) {
-                        echo "<tr><td colspan='8'>Kesalahan: " . $e->getMessage() . "</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+
+    </div>
 
         <!-- Navigasi untuk About Us -->
         <h2 class="mt-5">Navigasi Edit About Us</h2>
@@ -179,7 +216,7 @@ if ($conn->connect_error) {
                     datasets: [{
                         label: 'Tiket Terjual',
                         data: ticketData,
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                        backgroundColor: ['#0b2341', '#0b2341', '#0b2341', '#0b2341', '#0b2341'],
                     }]
                 },
                 options: {
