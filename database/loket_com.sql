@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 21, 2024 at 04:12 PM
+-- Generation Time: Dec 21, 2024 at 04:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -94,6 +94,24 @@ CREATE TABLE `purchase_history` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `purchase_history_nl`
+--
+
+CREATE TABLE `purchase_history_nl` (
+  `purchase_id` int(11) NOT NULL,
+  `user_name` varchar(100) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `order_id` int(11) DEFAULT NULL,
+  `event_id` int(11) DEFAULT NULL,
+  `ticket_id` int(11) DEFAULT NULL,
+  `purchase_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `quantity` int(11) NOT NULL,
+  `total_price` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tickets`
 --
 
@@ -141,7 +159,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `name`, `email`, `password`, `phone_number`, `ktp_number`, `date_of_birth`, `gender`, `role`, `created_at`, `updated_at`) VALUES
 (1, '', 'lintangmunoh@gmail.com', '$2y$10$/1s0Y4fak0wshMbfuaRzyeq0Vprf6XrwWjYFx2Xm3SLLfNe.5vYPa', NULL, NULL, NULL, NULL, 'user', '2024-12-20 17:13:04', '2024-12-20 17:13:04'),
-(2, 'admin', 'admin@gmail.com', 'admin', '9878', '89878', '1995-12-25', 'Laki-laki', 'admin', '2024-12-20 17:59:36', '2024-12-20 17:59:36');
+(2, 'admin', 'admin@gmail.com', 'admin', '9878', '89878', '1995-12-25', 'Laki-laki', 'admin', '2024-12-20 17:59:36', '2024-12-20 17:59:36'),
+(3, '', 'septiansoto@gmail.com', '$2y$10$9WmHmBWX.gJwrwMWhrVaQOCxkEKrK0hPXZp6DEoOrBm/0BPaS1ui6', NULL, NULL, NULL, NULL, 'user', '2024-12-21 15:15:08', '2024-12-21 15:15:08');
 
 --
 -- Indexes for dumped tables
@@ -166,6 +185,15 @@ ALTER TABLE `orders`
 ALTER TABLE `purchase_history`
   ADD PRIMARY KEY (`purchase_id`),
   ADD KEY `user_id` (`user_id`),
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `event_id` (`event_id`),
+  ADD KEY `ticket_id` (`ticket_id`);
+
+--
+-- Indexes for table `purchase_history_nl`
+--
+ALTER TABLE `purchase_history_nl`
+  ADD PRIMARY KEY (`purchase_id`),
   ADD KEY `order_id` (`order_id`),
   ADD KEY `event_id` (`event_id`),
   ADD KEY `ticket_id` (`ticket_id`);
@@ -207,6 +235,12 @@ ALTER TABLE `purchase_history`
   MODIFY `purchase_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `purchase_history_nl`
+--
+ALTER TABLE `purchase_history_nl`
+  MODIFY `purchase_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
@@ -216,7 +250,7 @@ ALTER TABLE `tickets`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -236,6 +270,14 @@ ALTER TABLE `purchase_history`
   ADD CONSTRAINT `purchase_history_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
   ADD CONSTRAINT `purchase_history_ibfk_3` FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`),
   ADD CONSTRAINT `purchase_history_ibfk_4` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`ticket_id`);
+
+--
+-- Constraints for table `purchase_history_nl`
+--
+ALTER TABLE `purchase_history_nl`
+  ADD CONSTRAINT `purchase_history_nl_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
+  ADD CONSTRAINT `purchase_history_nl_ibfk_2` FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`),
+  ADD CONSTRAINT `purchase_history_nl_ibfk_3` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`ticket_id`);
 
 --
 -- Constraints for table `tickets`
