@@ -9,6 +9,21 @@
     nav {
         display: none;
     }
+    .event-card {
+        text-align: left;
+    }
+    .event-details {
+        justify-content: flex-start;
+    }
+    .event-details p {
+        font-size: 0.8rem; /* Ukuran teks lebih kecil di layar kecil */
+    }
+    .event-details i {
+        font-size: 0.9rem;
+    }
+    .event-divider {
+        margin: 1rem 0;
+    }
 }
 
 .shadow {
@@ -45,4 +60,131 @@ main {
     background-position: top right; /* Menggerakkan latar belakang saat hover */
     background: linear-gradient(to top right, #3c4c8c, #3c4c8c, #3c4c8c); /* Gradasi berubah menjadi satu warna */
     color: #ecddd9; /* Warna teks saat hover */
+}
+
+.text-primary{
+    color: #6A9CFD !important;
+}
+
+/* Event Card Styling */
+.event-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-card h4 {
+    font-size: 1.5rem;
+    color: #3c4c8c;
+}
+
+/* Event Details Styling */
+.event-details {
+    text-align: left; /* Ubah teks menjadi rata kiri */
+    margin-left: 1rem; /* Tambahkan sedikit jarak kiri untuk tampilan lebih rapi */
+}
+
+/* Event Details - Smaller Font */
+.event-details p {
+    margin: 0.3rem 0;
+    font-size: 0.9rem; /* Ukuran teks lebih kecil */
+    color: #666666;
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    text-align: left;
+    gap: 0.5rem;
+}
+
+.event-details i {
+    font-size: 1rem; /* Ukuran ikon disesuaikan agar proporsional */
+    color: #3c4c8c;
+}
+
+.event-organizer p, h5 {
+    align-items: left;
+    justify-content: left;
+    text-align: left;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: #999999;
+}
+
+/* Icon Styles */
+.event-details i {
+    font-size: 1.2rem;
+    color: #3c4c8c;
+}
+
+/* Garis Pemisah */
+.event-divider {
+    border-top: 1px solid #ddd; /* Garis tipis */
+    margin: 1rem 0; /* Spasi di atas dan bawah garis */
+}
+
+/* Detail Event Styling */
+.event-detail {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.event-detail h4 {
+    font-size: 1.5rem;
+    color: #3c4c8c;
+    margin-bottom: 1rem;
+}
+
+.event-detail p {
+    font-size: 1rem;
+    color: #666666;
+    margin-bottom: 1rem;
+}
+
+.event-detail ul {
+    padding-left: 1.5rem;
+    list-style-type: disc;
+}
+
+.event-detail ul li {
+    font-size: 0.95rem;
+    color: #444444;
+    margin-bottom: 0.5rem;
+}
+
+/* Tab Navigation Styling */
+.nav-tabs .nav-link {
+    color: #c0c8cf;
+    border: none;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.nav-tabs .nav-link.active {
+    color: #3c4c8c;
+    border-bottom: 3px solid #3c4c8c;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #495057;
+}
+
+.tab-content {
+    /*background-color: #ffffff;*/
+    padding: 20px;
+    border-radius: 10px;
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+}
+
+.tab-pane h4 {
+    color: #3c4c8c;
+    margin-bottom: 1rem;
+}
+
+.tab-pane p {
+    color: #666666;
+    font-size: 1rem;
+    margin-bottom: 1rem;
 }

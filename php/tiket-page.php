@@ -96,27 +96,83 @@ try {
 
 <!-- MAIN CONTENT -->
 <div class="container py-4">
-<main class="flex-grow-1 container my-4">
-    <div class="row gx-4 gy-4 align-items-stretch">
-        <!-- Judul Konser dan Banner -->
-        <div class="col-md-8">
-            <div class="bg-light p-4 rounded">
-                <h1 class="fw-bold">Judul Konser</h1>
-                <img src="assets/image-placeholder.png" class="img-fluid rounded mt-3" alt="Banner Konser">
-            </div>
-        </div>
+    <main class="flex-grow-1 container my-4">
+        <div class="row gx-4 gy-4 align-items-stretch">
+            <!-- Judul Konser dan Banner -->
+            <div class="col-md-8">
+                <div class="bg-light p-4 rounded">
+                    <h1 class="fw-bold">Judul Konser</h1>
+                    <img src="assets/image-placeholder.png" class="img-fluid rounded mt-3" alt="Banner Konser">
+                </div>
 
-        <!-- Deskripsi Konser -->
-        <div class="col-md-4">
-            <div class="bg-light p-4 rounded shadow">
-                <h3 class="fw-bold mb-3">Deskripsi</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam facilisis leo id augue ullamcorper vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-                <button class="btn btn-gradient mt-3 px-4"  onclick="window.location.href='detail-tiket.php'">Beli Tiket</button>
+                <!-- Tab Navigasi -->
+                <div class="mt-4">
+                    <ul class="nav nav-tabs" id="eventTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="deskripsi-tab" data-bs-toggle="tab" data-bs-target="#deskripsi" type="button" role="tab" aria-controls="deskripsi" aria-selected="true">
+                                DESKRIPSI
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="detail-event-tab" data-bs-toggle="tab" data-bs-target="#detail-event" type="button" role="tab" aria-controls="detail-event" aria-selected="false">
+                                DETAIL EVENT
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content mt-4" id="eventTabContent">
+                        <!-- Tab: Deskripsi -->
+                        <div class="tab-pane fade show active" id="deskripsi" role="tabpanel" aria-labelledby="deskripsi-tab">
+                            <h4 class="fw-bold">WHISKY LIVE JAKARTA 2025</h4>
+                            <p>
+                                Whisky Live is the biggest annual international whisky tasting event that unites whisky and spirits enthusiasts from around the world. From Shanghai to New York, London to Paris, Whisky Live has become a must-attend exhibition since 2000.
+                                <strong>Caledonia Live</strong> is the official organizer in Indonesia to present <strong>WHISKY LIVE JAKARTA 2025</strong>.
+                            </p>
+                            <p>
+                                The objective is to create a vibrant and immersive platform for whisky enthusiasts, connoisseurs, and novices alike. Through tasting events, masterclasses, and interactions with experts, Whisky Live delivers an unforgettable experience.
+                            </p>
+                        </div>
+
+                        <!-- Tab: Detail Event -->
+                        <div class="tab-pane fade" id="detail-event" role="tabpanel" aria-labelledby="detail-event-tab">
+                            <h4 class="fw-bold">Detail Event</h4>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec orci vel lacus tincidunt aliquet. Aenean bibendum sapien et metus placerat, sed tempus turpis dictum. Nulla facilisi.
+                            </p>
+                            <ul>
+                                <li><strong>Jenis Event:</strong> Live Performance</li>
+                                <li><strong>Dress Code:</strong> Semi Formal</li>
+                                <li><strong>Usia Minimum:</strong> 18 tahun</li>
+                                <li><strong>Fasilitas:</strong> Minuman Gratis, Live Music, Networking</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deskripsi Konser -->
+            <div class="col-md-4">
+                <div class="event-card p-4 rounded shadow text-center">
+                    <h4 class="fw-bold">WHISKY LIVE JAKARTA 2025</h4>
+                    <div class="event-details my-3">
+                        <p><i class="bi bi-calendar-event"></i> 01 Feb - 02 Feb 2025</p>
+                        <p><i class="bi bi-clock"></i> 11:00 - 21:00 WIB</p>
+                        <p><i class="bi bi-geo-alt"></i> Four Seasons Hotel Ballroom, DKI Jakarta</p>
+                    </div>
+                    <!-- Garis Pemisah -->
+                    <div class="event-divider"></div>
+                    <div class="event-organizer mt-4">
+                        <p class="text-muted">Diselenggarakan oleh</p>
+                        <h5 class="fw-bold text-primary">Caledonia Live</h5>
+                    </div>
+                    <button class="btn btn-gradient mt-3 px-4" onclick="window.location.href='detail-tiket.php'">Beli Tiket</button>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 </div>
+
 
 <!-- FOOTER -->
 <footer>
