@@ -105,16 +105,19 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
         .sidebar .toggle-button {
             position: absolute;
             bottom: 20px;
-            left: 20px;
-            background-color: #031125;
+            left: 0;
+            background-color: #0b2341;
             border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
+            width: 100%;
+            height: 50px; /* Match other buttons */
             cursor: pointer;
+        }
+        .sidebar .toggle-button :hover {
+            background-color: #031125;
         }
         .sidebar.shrink .toggle-button {
             left: 10px;

@@ -24,10 +24,10 @@ session_start();
                         <a class="nav-link" href="../index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../register.php">Register</a>
+                        <a class="nav-link" href="../register.php">Daftar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="login.php">Login</a>
+                        <a class="nav-link" href="login.php">Masuk</a>
                     </li>
                 </ul>
             </div>
