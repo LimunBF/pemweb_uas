@@ -18,7 +18,7 @@
         $isLoggedIn = isset($_SESSION['user_id']); 
 
         // Include the database connection file
-        include 'connection/connect.php';
+        include_once 'connection/connect.php';
 
         // Get the database connection
         $pdo = getDatabaseConnection();

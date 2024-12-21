@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $isLoggedIn = isset($_SESSION['user_id']); // Cek apakah sesi user_id ada
 
 // Koneksi ke database
-include '../connection/connect.php';
+include_once '../connection/connect.php';
 
 try {
     // Mendapatkan koneksi database
@@ -159,7 +159,7 @@ try {
                         <p class="text-muted">Diselenggarakan oleh</p>
                         <h5 class="fw-bold text-primary"><?= htmlspecialchars($event['organizer_name']) ?></h5>
                     </div>
-                    <button class="btn btn-gradient mt-3 px-4" onclick="window.location.href='detail-tiket.php'">Beli Tiket</button>
+                    <button class="btn btn-gradient mt-3 px-4" onclick="window.location.href='detail-tiket.php?event_id=<?= $event['event_id'] ?>'">Beli Tiket</button>
                 </div>
             </div>
         </div>

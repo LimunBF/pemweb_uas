@@ -5,6 +5,27 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Periksa apakah pengguna sudah login
 $isLoggedIn = isset($_SESSION['user_id']); // Cek apakah sesi user_id ada
+
+// Mengambil event_id dari URL
+$event_id = isset($_GET['event_id']) ? $_GET['event_id'] : null;
+
+if ($event_id) {
+    // Koneksi ke database
+    include_once '../connection/connect.php'; // atau require_once
+    try {
+        $pdo = getDatabaseConnection();
+    } catch (PDOException $e) {
+        die("Koneksi gagal: " . $e->getMessage());
+    }
+
+    // Mengambil data tiket berdasarkan event_id
+    $sql = "SELECT * FROM tickets WHERE event_id = :event_id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['event_id' => $event_id]);
+    $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    die("Event ID tidak valid.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -121,24 +142,21 @@ try {
         <div class="tab-pane fade show active" id="tiket" role="tabpanel">
             <h3 class="fw-bold mb-3">Pilih Tiket</h3>
             <div class="mb-4">
-                <h5>Jenis Tiket 1</h5>
-                <p>Harga: Rp 500.000</p>
-                <select class="form-select w-auto" id="jumlahTiket1">
-                    <option>0</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                </select>
-            </div>
-            <div class="mb-4">
-                <h5>Jenis Tiket 2</h5>
-                <p>Harga: Rp 750.000</p>
-                <select class="form-select w-auto" id="jumlahTiket2">
-                    <option>0</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                </select>
+            <?php if ($tickets): ?>
+                            <?php foreach ($tickets as $ticket): ?>
+                                <div class="mb-4">
+                                    <h5><?php echo htmlspecialchars($ticket['ticket_type']); ?></h5>
+                                    <p>Harga: Rp <?php echo number_format($ticket['price'], 0, ',', '.'); ?></p>
+                                    <select class="form-select w-auto" id="jumlahTiket<?php echo $ticket['ticket_id']; ?>">
+                                        <?php for ($i = 0; $i <= $ticket['quantity_available']; $i++): ?>
+                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>Tidak ada tiket tersedia untuk event ini.</p>
+                        <?php endif; ?>
             </div>
             <button class="btn btn-gradient" id="btnCheckout">Checkout</button>
         </div>

@@ -1,4 +1,5 @@
 <?php
+if (!function_exists('getDatabaseConnection')) {
 function getDatabaseConnection() {
     // Konfigurasi database
     $host = 'localhost'; // Host database
@@ -21,6 +22,7 @@ function getDatabaseConnection() {
     } catch (PDOException $e) {
         // Menangani kesalahan koneksi dan menampilkan pesan
         die('Koneksi ke database gagal: ' . $e->getMessage());
+    }
     }
 }
 ?>
