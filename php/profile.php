@@ -88,245 +88,6 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="../css/profile.css" rel="stylesheet">
-    <style>
-    html,
-    body {
-        overflow-x: hidden;
-        background-color: #f8f9fa;
-    }
-
-    .content-header {
-        font-size: 24px;
-        margin-right: auto;
-        margin: 0 40px;
-    }
-
-    .profile-container {
-        max-width: 90%;
-        margin: 30px auto;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        animation: waveEffect 4s ease-out;
-    }
-
-    .btn-primary {
-        background-color: #0b2341;
-        border-color: #0b2341;
-    }
-
-    .btn-primary:hover {
-        background-color: #031125;
-        border-color: #031125;
-    }
-
-    .sidebar {
-        height: 100vh;
-        background-color: #0b2341;
-        color: white;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 250px;
-        padding-top: 20px;
-        transition: width 0.3s ease;
-    }
-
-    .sidebar.shrink {
-        width: 80px;
-    }
-
-    .sidebar a {
-        color: white;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-    }
-
-    .sidebar a i {
-        width: 24px;
-        text-align: center;
-    }
-
-    .sidebar a span {
-        margin-left: 10px;
-    }
-
-    .sidebar.shrink a span {
-        display: none;
-    }
-
-    .sidebar a:hover {
-        background-color: #031125;
-    }
-
-    .sidebar .toggle-button {
-        position: absolute;
-        bottom: 20px;
-        left: 0;
-        background-color: #0b2341;
-        border: none;
-        display: flex;
-        padding: 10px 20px;
-        color: white;
-        width: 100%;
-        height: 50px;
-        cursor: pointer;
-    }
-
-    .sidebar .toggle-button:hover {
-        background-color: #031125;
-    }
-
-    .sidebar.shrink .toggle-button {
-        left: 0;
-        justify-content: center;
-    }
-
-    .sidebar .toggle-button span {
-        margin-left: 10px;
-        color: white;
-    }
-
-    .sidebar.shrink .toggle-button span {
-        display: none;
-    }
-
-    .dropdown-profile {
-        background-color: white;
-        color: #0b2341;
-        border-radius: 20px;
-        padding: 5px 15px;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        position: relative;
-    }
-
-    .dropdown-profile:hover {
-        background-color: #f0f0f0;
-    }
-
-    .dropdown-profile img {
-        width: 30px;
-        height: 30px;
-        margin-right: 10px;
-    }
-
-    .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: auto;
-        min-width: 200px;
-        z-index: 1050;
-        display: none;
-        font-size: 14px;
-        background-color: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        border-radius: 0.25rem;
-        padding: 0.5rem 0;
-    }
-
-    .dropdown-profile:hover .dropdown-menu {
-        display: block;
-    }
-
-    .dropdown-menu a {
-        color: #0b2341;
-        text-decoration: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 1rem;
-    }
-
-    .dropdown-menu a:hover {
-        background-color: #f0f0f0;
-    }
-
-    .dropdown-menu .text-danger {
-        color: red;
-    }
-
-    .content-container {
-        margin-left: 250px;
-        transition: margin-left 0.3s ease;
-    }
-
-    .content-container.shrink {
-        margin-left: 80px;
-    }
-
-    .sidebar .logo {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-
-    .sidebar.shrink .logo span {
-        display: none;
-    }
-
-    .sidebar .logo i {
-        font-size: 24px;
-    }
-
-    .profile-header {
-        font-size: 24px;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 10px;
-    }
-
-    .form-control {
-        border: none;
-        border-bottom: 2px solid #ccc;
-        border-radius: 0;
-        box-shadow: none;
-        transition: all 1, 5s;
-    }
-
-    .form-control:focus {
-        border-bottom: 2px solid #196dd3;
-        box-shadow: none;
-    }
-
-    @keyframes waveEffect {
-        0% {
-            background-color: #ffffff;
-        }
-
-        50% {
-            background-color: #f2f2f2;
-        }
-
-        100% {
-            background-color: #ffffff;
-        }
-    }
-
-    input:focus {
-        animation: highlightInput 0.6s ease-in-out;
-    }
-
-    @keyframes highlightInput {
-        0% {
-            background-color: #ffffff;
-        }
-
-        50% {
-            background-color: #e0f7fa;
-        }
-
-        100% {
-            background-color: #ffffff;
-        }
-    }
-    </style>
 </head>
 
 <body>
@@ -341,7 +102,7 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
                     <a href="/pemweb_uas/index.php">Jelajah <i class="bi bi-chevron-right"></i></a>
                     <a href="#">Tiket Saya <i class="bi bi-chevron-right"></i></a>
                     <a href="profile.php">Informasi Dasar <i class="bi bi-chevron-right"></i></a>
-                    <a href="#">Pengaturan <i class="bi bi-chevron-right"></i></a>
+                    <a href="pengaturan.php">Pengaturan <i class="bi bi-chevron-right"></i></a>
                     <div class="dropdown-divider"></div>
                     <a href="logout.php" class="text-danger">Keluar <i class="bi bi-chevron-right"></i></a>
                 </div>
@@ -357,7 +118,7 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
         <a href="../index.php"><i class="bi bi-house"></i><span>Jelajah Event</span></a>
         <a href="#"><i class="bi bi-ticket-perforated"></i><span>Tiket Saya</span></a>
         <a href="profile.php"><i class="bi bi-person"></i><span>Informasi Dasar</span></a>
-        <a href="#"><i class="bi bi-gear"></i><span>Pengaturan</span></a>
+        <a href="pengaturan.php"><i class="bi bi-gear"></i><span>Pengaturan</span></a>
         <button class="toggle-button" onclick="toggleSidebar()">
             <i class="bi bi-chevron-left text-white"></i><span>Shrink</span>
         </button>
@@ -377,8 +138,7 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email"
-                        value="<?php echo htmlspecialchars($user['email']); ?>">
+                    <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
                 </div>
                 <div class="mb-3">
                     <label for="phone_number" class="form-label">Nomor Telepon</label>
@@ -392,7 +152,7 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'User'
                 </div>
                 <div class="mb-3">
                     <label for="date_of_birth" class="form-label">Tanggal Lahir</label>
-                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
+                    <input type="date" class="form-control custom-date-picker" id="date_of_birth" name="date_of_birth"
                         value="<?php echo htmlspecialchars($user['date_of_birth']); ?>">
                 </div>
                 <div class="mb-3">
