@@ -1,48 +1,64 @@
 <?php
+header('Content-Type: application/json');
+require_once '../connection/connect.php';
+
+$pdo = getDatabaseConnection();
+
 session_start();
 
-// Periksa apakah pengguna sudah login
+// Verifikasi apakah pengguna sudah login
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    echo json_encode(['error' => 'Unauthorized']);
+    http_response_code(401);
     exit();
 }
 
-// Include koneksi ke database
-include '../connection/connect.php';
-$pdo = getDatabaseConnection();
-
-// CSRF token
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-
-// Ambil data pengguna dari database
 $user_id = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = :user_id");
-$stmt->bindParam(':user_id', $user_id);
-$stmt->execute();
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Ambil metode HTTP
+$method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'GET') {
+    // Ambil data pengguna
+    $stmt = $pdo->prepare("SELECT name, email, phone_number, ktp_number, date_of_birth, gender FROM users WHERE user_id = :user_id");
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        echo json_encode($user);
+    } else {
+        echo json_encode(['error' => 'User not found']);
+        http_response_code(404);
+    }
+
+} elseif ($method === 'POST') {
     // Validasi CSRF token
-    if ($_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die("Token CSRF tidak valid");
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (empty($input['csrf_token']) || $input['csrf_token'] !== $_SESSION['csrf_token']) {
+        echo json_encode(['error' => 'Invalid CSRF token']);
+        http_response_code(403);
+        exit();
     }
 
-    // Sanitasi input jika ada
-    $name = isset($_POST['name']) ? htmlspecialchars(trim($_POST['name'])) : $user['name'];
-    $email = isset($_POST['email']) ? htmlspecialchars(trim($_POST['email'])) : $user['email'];
-    $phone_number = isset($_POST['phone_number']) ? htmlspecialchars(trim($_POST['phone_number'])) : $user['phone_number'];
-    $ktp_number = isset($_POST['ktp_number']) ? htmlspecialchars(trim($_POST['ktp_number'])) : $user['ktp_number'];
-    $date_of_birth = isset($_POST['date_of_birth']) ? htmlspecialchars(trim($_POST['date_of_birth'])) : $user['date_of_birth'];
-    $gender = isset($_POST['gender']) ? htmlspecialchars(trim($_POST['gender'])) : $user['gender'];
+    // Data input
+    $name = isset($input['name']) ? htmlspecialchars(trim($input['name'])) : null;
+    $email = isset($input['email']) ? htmlspecialchars(trim($input['email'])) : null;
+    $phone_number = isset($input['phone_number']) ? htmlspecialchars(trim($input['phone_number'])) : null;
+    $ktp_number = isset($input['ktp_number']) ? htmlspecialchars(trim($input['ktp_number'])) : null;
+    $date_of_birth = isset($input['date_of_birth']) ? htmlspecialchars(trim($input['date_of_birth'])) : null;
+    $gender = isset($input['gender']) ? htmlspecialchars(trim($input['gender'])) : null;
 
-    // Validasi hanya untuk email dan nomor telepon jika diisi
-    if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        die("Email tidak valid");
+    // Validasi
+    if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(['error' => 'Invalid email format']);
+        http_response_code(400);
+        exit();
     }
-    if (!empty($phone_number) && !preg_match("/^[0-9]{10,15}$/", $phone_number)) {
-        die("Nomor telepon tidak valid");
+    if ($phone_number && !preg_match("/^[0-9]{10,15}$/", $phone_number)) {
+        echo json_encode(['error' => 'Invalid phone number']);
+        http_response_code(400);
+        exit();
     }
 
     // Update data pengguna
@@ -65,21 +81,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updateStmt->bindParam(':gender', $gender);
     $updateStmt->bindParam(':user_id', $user_id);
 
-    if (!$updateStmt->execute()) {
-        echo "Terjadi kesalahan saat memperbarui data.";
-        error_log("SQL Error: " . implode(" | ", $updateStmt->errorInfo()));
-        die("Terjadi kesalahan saat memperbarui data.");
+    if ($updateStmt->execute()) {
+        echo json_encode(['message' => 'User updated successfully']);
     } else {
-        header("Location: profile.php");
-        exit();
+        echo json_encode(['error' => 'Failed to update user']);
+        http_response_code(500);
     }
+
+} else {
+    echo json_encode(['error' => 'Method not allowed']);
+    http_response_code(405);
 }
-
-$dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'Profil Anda';
-
-// Tentukan halaman aktif untuk highlight
-$current_page = basename($_SERVER['PHP_SELF']);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="id">
