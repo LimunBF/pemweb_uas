@@ -129,7 +129,7 @@
             <?php if (!empty($events)): ?>
                 <?php foreach ($events as $event): ?>
                     <div class="col-md-3">
-                        <div class="card event-card">
+                        <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>" class="card event-card">
                             <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" class="card-img-top" alt="Event Image">
                             <div class="card-body">
                                 <h6 class="card-title fw-bold"><?php echo htmlspecialchars($event['title']); ?></h6>
@@ -143,7 +143,7 @@
                                     <?php echo htmlspecialchars($event['organizer_name']); ?>
                                 </small>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
