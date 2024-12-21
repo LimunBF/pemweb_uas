@@ -31,19 +31,46 @@ if ($conn->connect_error) {
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="css/admin-dashboard.css">
+    <link rel="stylesheet" type="text/css" href="../css/admin-dashboard.css">
+    <link rel="stylesheet" type="text/css" href="../css/navbar_footer.css">
+    <style>
+        /* Custom Pagination Styling */
+        .custom-pagination .page-item .custom-page-link {
+            background-color: #152c52;
+            color: #a0b8d8;
+            border: none;
+            padding: 10px 15px;
+            margin: 0 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .custom-pagination .page-item .custom-page-link:hover {
+            background-color: #2f80ed;
+            color: white;
+        }
+
+        .custom-pagination .page-item.active .custom-page-link {
+            background-color: #0b2341;
+            color: white;
+            font-weight: bold;
+            border: 2px solid #2f80ed;
+        }
+    </style>
 </head>
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" href="#">Admin Dashboard</a>
-                <div class="d-flex">
-                    <a href="logout.php" class="btn btn-danger">Logout</a>
-                </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
+            <!-- Menu Kanan -->
+            <div style="color: white;" class="d-flex align-items-center">
             </div>
-        </nav>
+        </div>
+    </nav>
     </header>
 
     <div class="container my-4">
@@ -104,22 +131,22 @@ if ($conn->connect_error) {
 
         <!-- Navigasi Pagination -->
         <nav>
-            <ul class="pagination justify-content-center">
+            <ul class="pagination justify-content-center custom-pagination">
                 <?php if ($currentPage > 1): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">&laquo; Previous</a>
+                        <a class="page-link custom-page-link" href="?page=<?php echo $currentPage - 1; ?>">&laquo; Previous</a>
                     </li>
                 <?php endif; ?>
 
                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                    <li class="page-item <?php echo ($i == $currentPage) ? 'active' : ''; ?>">
-                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                    <li class="page-item <?php echo ($i == $currentPage) ? 'active custom-active' : ''; ?>">
+                        <a class="page-link custom-page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
                     </li>
                 <?php endfor; ?>
 
                 <?php if ($currentPage < $totalPages): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">Next &raquo;</a>
+                        <a class="page-link custom-page-link" href="?page=<?php echo $currentPage + 1; ?>">Next &raquo;</a>
                     </li>
                 <?php endif; ?>
             </ul>
@@ -146,9 +173,31 @@ if ($conn->connect_error) {
     </div>
 
         <!-- Navigasi untuk About Us -->
-        <h2 class="mt-5">Navigasi Edit About Us</h2>
-        <a href="tentang_kami.php" class="btn btn-info">Edit About Us</a>
+        <h2 class="mt-5">Edit Tentang Kami</h2>
+        <a href="tentang_kami.php" class="btn btn-info">Go To Tentang Kami</a>
     </div>
+
+    <footer>
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-links">
+                    <a href="php/tentang_kami.php">Tentang Kami</a>
+                    <span>•</span>
+                    <a href="#">Blog</a>
+                    <span>•</span>
+                    <a href="#">Kebijakan Privasi</a>
+                    <span>•</span>
+                    <a href="#">Kebijakan Cookie</a>
+                    <span>•</span>
+                    <a href="#">Panduan</a>
+                    <span>•</span>
+                    <a href="#">Hubungi Kami</a>
+                </div>
+                <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Bootstrap 5.3 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
