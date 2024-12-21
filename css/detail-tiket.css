@@ -1,55 +1,75 @@
 .nav-tabs .nav-link {
-            color: #3c4c8c;
-            font-weight: bold;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #3c4c8c;
-            color: #fff;
-        }
-        .tab-content {
-            border: 1px solid #dee2e6;
-            padding: 20px;
-            border-radius: 0 0 5px 5px;
-        }
-        .bg-payment {
-            background-color: #f8d7da;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .bg-primary {
-            background-color: #3c4c8c !important; /* Menimpa warna default Bootstrap */
-            color: white !important; /* Warna teks tetap putih */
-        }
-        /* Gradient Background untuk tombol "Beli Tiket" */
-        .btn-gradient {
-            background: linear-gradient(to top right, #3c4c8c, #ecddd9, #f1b0bb); /* Gradasi awal */
-            color: white; /* Warna teks putih */
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            transition: background-position 0.3s ease, color 0.3s ease; /* Transisi untuk posisi latar belakang dan warna teks */
-            background-size: 200% 200%; /* Mengatur ukuran latar belakang untuk efek pergerakan */
-            background-position: bottom left; /* Posisi awal latar belakang */
-        }
-        /* Hover Effect: Gradasi bergerak dan berubah menjadi #3c4c8c */
-        .btn-gradient:hover {
-            background-position: top right; /* Menggerakkan latar belakang saat hover */
-            background: linear-gradient(to top right, #3c4c8c, #3c4c8c, #3c4c8c); /* Gradasi berubah menjadi satu warna */
-            color: #ecddd9; /* Warna teks saat hover */
-        }
-        /* Gradient Background untuk tombol "Beli Tiket" */
-        .btn-gradient2 {
-            background: linear-gradient(to top right, #FFFFFF, #FFFFFF, #FFFFFF); /* Gradasi awal */
-            color: black;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            transition: background-position 0.3s ease, color 0.3s ease; /* Transisi untuk posisi latar belakang dan warna teks */
-            background-size: 200% 200%; /* Mengatur ukuran latar belakang untuk efek pergerakan */
-            background-position: bottom left; /* Posisi awal latar belakang */
-        }
-        .btn-gradient2:hover {
-            background-position: top right; /* Menggerakkan latar belakang saat hover */
-            background: linear-gradient(to top right, #3c4c8c, #ecddd9, #f1b0bb); /* Gradasi berubah menjadi satu warna */
-            color: #FFFFFF; /* Warna teks saat hover */
-        }
+  color: #3c4c8c;
+  font-weight: bold;
+}
+.nav-tabs .nav-link.active {
+  background-color: #3c4c8c;
+  color: #fff;
+}
+.tab-content {
+  border: 1px solid #dee2e6;
+  padding: 20px;
+  border-radius: 0 0 5px 5px;
+}
+.bg-payment {
+  background-color: #f8d7da;
+  padding: 10px;
+  border-radius: 5px;
+}
+.bg-primary {
+  background-color: #3c4c8c !important; /* Menimpa warna default Bootstrap */
+  color: white !important; /* Warna teks tetap putih */
+}
+/* Gradient Background untuk tombol "Beli Tiket" */
+.btn-gradient {
+  background: linear-gradient(
+    to top right,
+    #3c4c8c,
+    #ecddd9,
+    #f1b0bb
+  ); /* Gradasi awal */
+  color: white; /* Warna teks putih */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  transition: background-position 0.3s ease, color 0.3s ease; /* Transisi untuk posisi latar belakang dan warna teks */
+  background-size: 200% 200%; /* Mengatur ukuran latar belakang untuk efek pergerakan */
+  background-position: bottom left; /* Posisi awal latar belakang */
+}
+/* Hover Effect: Gradasi bergerak dan berubah menjadi #3c4c8c */
+.btn-gradient:hover {
+  background-position: top right; /* Menggerakkan latar belakang saat hover */
+  background: linear-gradient(
+    to top right,
+    #3c4c8c,
+    #3c4c8c,
+    #3c4c8c
+  ); /* Gradasi berubah menjadi satu warna */
+  color: #ecddd9; /* Warna teks saat hover */
+}
+/* Gradient Background untuk tombol "Beli Tiket" */
+.btn-gradient2 {
+  background: linear-gradient(
+    to top right,
+    #ffffff,
+    #ffffff,
+    #ffffff
+  ); /* Gradasi awal */
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  transition: background-position 0.3s ease, color 0.3s ease; /* Transisi untuk posisi latar belakang dan warna teks */
+  background-size: 200% 200%; /* Mengatur ukuran latar belakang untuk efek pergerakan */
+  background-position: bottom left; /* Posisi awal latar belakang */
+}
+.btn-gradient2:hover {
+  background-position: top right; /* Menggerakkan latar belakang saat hover */
+  background: linear-gradient(
+    to top right,
+    #3c4c8c,
+    #ecddd9,
+    #f1b0bb
+  ); /* Gradasi berubah menjadi satu warna */
+  color: #ffffff; /* Warna teks saat hover */
+}
