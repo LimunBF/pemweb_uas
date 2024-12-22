@@ -38,7 +38,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span id="dropdown-name">Profil Anda</span>
                 <div class="dropdown-menu">
                     <a href="../Jelajah.php">Jelajah <i class="bi bi-chevron-right"></i></a>
-                    <a href="php/riwayat.php">Tiket Saya <i class="bi bi-chevron-right"></i></a>
+                    <a href="riwayat.php">Tiket Saya <i class="bi bi-chevron-right"></i></a>
                     <a href="profile.php">Informasi Dasar <i class="bi bi-chevron-right"></i></a>
                     <a href="pengaturan.php">Pengaturan <i class="bi bi-chevron-right"></i></a>
                     <div class="dropdown-divider"></div>

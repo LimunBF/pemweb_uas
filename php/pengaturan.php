@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
                 <span><?php echo $dropdownName; ?></span>
                 <div class="dropdown-menu">
                     <a href="../Jelajah.php">Jelajah <i class="bi bi-chevron-right"></i></a>
-                    <a href="#">Tiket Saya <i class="bi bi-chevron-right"></i></a>
+                    <a href="riwayat.php">Tiket Saya <i class="bi bi-chevron-right"></i></a>
                     <a href="profile.php">Informasi Dasar <i class="bi bi-chevron-right"></i></a>
                     <a href="pengaturan.php">Pengaturan <i class="bi bi-chevron-right"></i></a>
                     <div class="dropdown-divider"></div>
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
         <a href="../Jelajah.php" class="<?php echo $current_page == 'index.php' ? 'active' : ''; ?>">
             <i class="bi bi-house"></i><span>Jelajah Event</span>
         </a>
-        <a href="#" class="<?php echo $current_page == 'tickets.php' ? 'active' : ''; ?>">
+        <a href="riwayat.php" class="<?php echo $current_page == 'tickets.php' ? 'active' : ''; ?>">
             <i class="bi bi-ticket-perforated"></i><span>Tiket Saya</span>
         </a>
         <a href="profile.php" class="<?php echo $current_page == 'profile.php' ? 'active' : ''; ?>">
