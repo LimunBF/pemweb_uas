@@ -69,6 +69,68 @@
         background-color: #fff0eb;
         border-radius: 4px;
     }
+
+    .location-list {
+        max-height: 250px;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+
+    .location-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        color: #666;
+        transition: all 0.2s ease;
+        display: block;
+        text-decoration: none;
+    }
+
+    .location-item:hover {
+        color: #ff4d00;
+        background-color: #f8f9fa;
+    }
+
+    .location-item.selected {
+        color: #ff4d00;
+        font-weight: 500;
+    }
+
+    .search-box .input-group {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+    }
+
+    .search-box .form-control {
+        border: none;
+        padding: 8px 12px;
+    }
+
+    .search-box .form-control:focus {
+        box-shadow: none;
+    }
+
+    .search-box .input-group-text {
+        background: transparent;
+        border: none;
+        color: #666;
+    }
+
+    .no-events-box {
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        background-color: #f8f9fa;
+        margin: 40px auto;
+        max-width: 500px;
+    }
+    
+    .no-events-box p {
+        color: #dc3545;  /* Warna merah Bootstrap */
+        font-size: 1.1rem;
+        margin: 0;
+        font-weight: 500;
+    }
     </style>
 </head>
 <body>
@@ -225,7 +287,32 @@
                             </div>
 
                             <div class="location-list" id="locationList">
-                                <!-- Locations will be loaded here -->
+                                <!-- Default locations -->
+                                <div class="location-item <?php echo !isset($_GET['location']) ? 'selected' : ''; ?>" data-value="">
+                                    Semua Lokasi
+                                </div>
+                                <?php
+                                // Daftar kota default
+                                $defaultCities = [
+                                    'Bali',
+                                    'Bandung',
+                                    'DKI Jakarta',
+                                    'Kota Yogyakarta',
+                                    'Surabaya',
+                                    'Malang',
+                                    'Semarang',
+                                    'Medan',
+                                    'Makassar',
+                                    'Palembang'
+                                ];
+
+                                foreach ($defaultCities as $city) {
+                                    $isSelected = isset($_GET['location']) && $_GET['location'] === $city;
+                                    ?>
+                                    <div class="location-item <?php echo $isSelected ? 'selected' : ''; ?>" data-value="<?php echo $city; ?>">
+                                        <?php echo $city; ?>
+                                    </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>
@@ -322,7 +409,9 @@
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-12">
-                        <p class="text-center">Tidak ada event yang tersedia saat ini.</p>
+                        <div class="no-events-box">
+                            <p>Tidak ada event yang tersedia saat ini.</p>
+                        </div>
                     </div>
                 <?php endif; ?>
             </div>
