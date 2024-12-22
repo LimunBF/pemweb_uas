@@ -50,7 +50,7 @@ if ($isLoggedIn) {
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
                 <!-- Logo -->
-                <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
+                <a class="navbar-brand fw-bold" href="#">BÉLI TIKÉT</a>
                 <!-- Search Bar -->
                 <div class="mx-auto" style="width: 40%;">
                     <div class="input-group">
@@ -65,12 +65,6 @@ if ($isLoggedIn) {
 
                 <!-- Menu Kanan -->
                 <div class="d-flex align-items-center">
-                    <!-- Buat Event -->
-                    <a href="#" class="icon-link me-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="Buat Event">
-                        Buat Event
-                    </a>
-
                     <!-- Jelajah -->
                     <a href="jelajah.php" class="icon-link me-3">
                         <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
