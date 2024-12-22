@@ -259,7 +259,7 @@ $topEvents = $stmtTopEvents->fetchAll();
                     <span>•</span>
                     <a href="#">Hubungi Kami</a>
                 </div>
-                <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
+                <p class="copyright">&copy; 2024 Beli Tiket (PT Global Loket Sejahtera)</p>
             </div>
         </div>
     </footer>

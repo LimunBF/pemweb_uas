@@ -53,6 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Event</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/navbar_footer.css">
 </head>
 <body>
@@ -61,17 +63,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
                 <!-- Logo -->
-                <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
+                <a class="navbar-brand fw-bold" href="../index.php">BÉLI TIKÉT</a>
+
                 <!-- Menu Kanan -->
-                <div class="d-flex align-items-center">
-                    <a style="color: white;">Loket.com Event Management</a>
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Tombol Kembali -->
+                    <a href="admin-dashboard.php" class="btn btn-outline-light d-flex align-items-center gap-2 px-3">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-light d-flex align-items-center gap-2 px-3" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fas fa-circle-user fa-lg"></i>
+                            <span>Admin</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-header">Halo, Admin</li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="logout.php">Keluar</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container-fluid mt-6">
         <div class="container-sm mt-4" style="max-width: 900px;"> <!-- Membatasi lebar -->
-            <h3>Edit Event</h3>
+            <h3 class="mb-4">Edit Event</h3>
             <form method="POST">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
@@ -118,7 +138,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <textarea class="form-control" id="facilities" name="facilities" rows="4" required><?php echo htmlspecialchars($event['facilities']); ?></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <div class="d-flex gap-2">
+                    <a href="admin-dashboard.php" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
             </form>
         </div>
     </div>
@@ -139,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <span>•</span>
                     <a href="#">Hubungi Kami</a>
                 </div>
-                <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
+                <p class="copyright">&copy; 2024 Beli Tiket (PT Global Loket Sejahtera)</p>
             </div>
         </div>
     </footer>

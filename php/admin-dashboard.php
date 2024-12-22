@@ -72,9 +72,24 @@ $ticketQuantities = array_column($topTicketsData, 'quantity');
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold" href="../index.php">BÉLI TIKÉT</a>
+
+                <!-- Menu Kanan -->
                 <div class="d-flex align-items-center gap-3">
-                    <span>Admin</span>
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-light d-flex align-items-center gap-2 px-3" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fas fa-circle-user fa-lg"></i>
+                            <span>Admin</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-header">Halo, Admin</li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="logout.php">Keluar</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -189,7 +204,7 @@ $ticketQuantities = array_column($topTicketsData, 'quantity');
                     <span>•</span>
                     <a href="#">Hubungi Kami</a>
                 </div>
-                <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
+                <p class="copyright">&copy; 2024 Beli Tiket (PT Global Loket Sejahtera)</p>
             </div>
         </div>
     </footer>
