@@ -1,3 +1,35 @@
+<?php
+session_start(); 
+$isLoggedIn = isset($_SESSION['user_id']); 
+
+// Include the database connection file
+include_once 'connection/connect.php';
+
+// Get the database connection
+$pdo = getDatabaseConnection();
+
+// Query untuk mengambil events
+$stmt = $pdo->prepare("SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events LIMIT 10");
+$stmt->execute();
+$events = $stmt->fetchAll();
+
+// Periksa apakah pengguna sudah login
+if ($isLoggedIn) {
+    // Ambil user_id dari session
+    $userId = $_SESSION['user_id'];
+
+    // Query untuk mengambil nama pengguna berdasarkan user_id
+    $stmtUser = $pdo->prepare("SELECT name FROM users WHERE user_id = :user_id LIMIT 1");
+    $stmtUser->execute(['user_id' => $userId]);
+    $user = $stmtUser->fetch();
+
+    // Pastikan nama pengguna ditemukan
+    $userName = $user ? htmlspecialchars($user['name']) : 'Pengguna';
+} else {
+    $userName = null;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -13,22 +45,6 @@
 </head>
 
 <body>
-    <?php 
-        session_start(); 
-        $isLoggedIn = isset($_SESSION['user_id']); 
-
-        // Include the database connection file
-        include_once 'connection/connect.php';
-
-        // Get the database connection
-        $pdo = getDatabaseConnection();
-
-        // Query to fetch events
-        $stmt = $pdo->prepare("SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events LIMIT 10");
-        $stmt->execute();
-        $events = $stmt->fetchAll();
-    ?>
-
     <header>
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark">
@@ -41,7 +57,8 @@
                         <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
                             id="searchInput" aria-label="Search">
                         <button class="btn btn-primary" type="button">
-                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
+                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16"
+                                height="16">
                         </button>
                     </div>
                 </div>
@@ -61,24 +78,29 @@
                     </a>
 
                     <?php if (!$isLoggedIn): ?>
-                        <!-- Daftar dan Masuk -->
-                        <a href="php/register.php" class="btn btn-outline-light me-2">Daftar</a>
-                        <a href="php/login.php" class="btn btn-primary">Masuk</a>
+                    <!-- Daftar dan Masuk -->
+                    <a href="php/register.php" class="btn btn-outline-light me-2">Daftar</a>
+                    <a href="php/login.php" class="btn btn-primary">Masuk</a>
                     <?php else: ?>
-                        <!-- Profile Dropdown -->
-                        <div class="dropdown">
-                            <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <li class="dropdown-header">Profil Anda</li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
-                                <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
-                                <li><a class="dropdown-item" href="#">Pengaturan</a></li>
-                                <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
-                            </ul>
-                        </div>
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown">
+                        <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-header">
+                                <?php echo $userName ? "Halo, " . $userName : "Profil Anda"; ?>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
+                            <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
+                            <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                            <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
+                        </ul>
+                    </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -89,27 +111,34 @@
 
         <!-- Header Carousel -->
         <div id="headerCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+            <?php
+            // Query untuk mengambil 3 event dengan gambar secara acak
+            $stmtCarousel = $pdo->prepare("SELECT event_id, event_image_path FROM events WHERE event_image_path IS NOT NULL ORDER BY RAND() LIMIT 3");
+            $stmtCarousel->execute();
+            $carouselImages = $stmtCarousel->fetchAll();
+            ?>
+
             <!-- Indicators -->
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="0" class="active"
-                    aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="1"
-                    aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="2"
-                    aria-label="Slide 3"></button>
+                <?php foreach ($carouselImages as $index => $image): ?>
+                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="<?php echo $index; ?>"
+                    class="<?php echo $index === 0 ? 'active' : ''; ?>"
+                    aria-current="<?php echo $index === 0 ? 'true' : 'false'; ?>"
+                    aria-label="Slide <?php echo $index + 1; ?>"></button>
+                <?php endforeach; ?>
             </div>
 
             <!-- Carousel Items -->
             <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="assets/images/carousel1.png" class="d-block w-100" alt="Slide 1">
+                <?php foreach ($carouselImages as $index => $image): ?>
+                <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
+                    <!-- Tambahkan link agar gambar bisa diklik -->
+                    <a href="php/tiket-page.php?event_id=<?php echo $image['event_id']; ?>">
+                        <img src="<?php echo htmlspecialchars($image['event_image_path']); ?>" class="d-block w-100"
+                            alt="Event Image">
+                    </a>
                 </div>
-                <div class="carousel-item">
-                    <img src="assets/images/carousel2.png" class="d-block w-100" alt="Slide 2">
-                </div>
-                <div class="carousel-item">
-                    <img src="assets/images/carousel3.png" class="d-block w-100" alt="Slide 3">
-                </div>
+                <?php endforeach; ?>
             </div>
 
             <!-- Controls -->
@@ -123,31 +152,33 @@
             </button>
         </div>
 
+
         <!-- Event Pilihan Section -->
         <h3 class="fw-bold mb-4">Event Pilihan</h3>
         <div class="row g-4">
             <?php if (!empty($events)): ?>
-                <?php foreach ($events as $event): ?>
-                    <div class="col-md-3">
-                        <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>" class="card event-card">
-                            <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" class="card-img-top" alt="Event Image">
-                            <div class="card-body">
-                                <h6 class="card-title fw-bold"><?php echo htmlspecialchars($event['title']); ?></h6>
-                                <p class="card-text mb-1 text-muted">
-                                    <?php echo date('d M Y', strtotime($event['event_date'])); ?>
-                                </p>
-                                <p class="fw-bold mb-2">
-                                    <?php echo htmlspecialchars($event['location']); ?>
-                                </p>
-                                <small class="text-muted">
-                                    <?php echo htmlspecialchars($event['organizer_name']); ?>
-                                </small>
-                            </div>
-                        </a>
+            <?php foreach ($events as $event): ?>
+            <div class="col-md-3">
+                <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>" class="card event-card">
+                    <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" class="card-img-top"
+                        alt="Event Image">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold"><?php echo htmlspecialchars($event['title']); ?></h6>
+                        <p class="card-text mb-1 text-muted">
+                            <?php echo date('d M Y', strtotime($event['event_date'])); ?>
+                        </p>
+                        <p class="fw-bold mb-2">
+                            <?php echo htmlspecialchars($event['location']); ?>
+                        </p>
+                        <small class="text-muted">
+                            <?php echo htmlspecialchars($event['organizer_name']); ?>
+                        </small>
                     </div>
-                <?php endforeach; ?>
+                </a>
+            </div>
+            <?php endforeach; ?>
             <?php else: ?>
-                <p class="text-muted">Tidak ada event tersedia saat ini.</p>
+            <p class="text-muted">Tidak ada event tersedia saat ini.</p>
             <?php endif; ?>
         </div>
 
@@ -187,47 +218,47 @@
         <div class="footer">
             <div class="container">
                 <div class="row">
-                   
-                <!-- Keamanan dan Privasi -->
-                <div class="security-section text-center mt-4">
-                    <h5>Keamanan dan Privasi</h5>
-                    <img src="assets/images/logo_bsi.png" alt="Logo BSI" class="mt-2 mb-4">
-                </div>
 
-                <!-- Social Media Icons -->
-                <div class="social-media-section text-center">
-                    <h5>Ikuti Kami</h5>
-                    <div class="social-icons mt-3">
-                        <a href="#"><i class="bi bi-instagram"></i></a>
-                        <a href="#"><i class="bi bi-tiktok"></i></a>
-                        <a href="#"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#"><i class="bi bi-linkedin"></i></a>
-                        <a href="#"><i class="bi bi-youtube"></i></a>
-                        <a href="#"><i class="bi bi-facebook"></i></a>
+                    <!-- Keamanan dan Privasi -->
+                    <div class="security-section text-center mt-4">
+                        <h5>Keamanan dan Privasi</h5>
+                        <img src="assets/images/logo_bsi.png" alt="Logo BSI" class="mt-2 mb-4">
+                    </div>
+
+                    <!-- Social Media Icons -->
+                    <div class="social-media-section text-center">
+                        <h5>Ikuti Kami</h5>
+                        <div class="social-icons mt-3">
+                            <a href="#"><i class="bi bi-instagram"></i></a>
+                            <a href="#"><i class="bi bi-tiktok"></i></a>
+                            <a href="#"><i class="bi bi-twitter-x"></i></a>
+                            <a href="#"><i class="bi bi-linkedin"></i></a>
+                            <a href="#"><i class="bi bi-youtube"></i></a>
+                            <a href="#"><i class="bi bi-facebook"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Footer Bottom -->
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="footer-links">
-                    <a href="php/tentang_kami.php">Tentang Kami</a>
-                    <span>•</span>
-                    <a href="#">Blog</a>
-                    <span>•</span>
-                    <a href="#">Kebijakan Privasi</a>
-                    <span>•</span>
-                    <a href="#">Kebijakan Cookie</a>
-                    <span>•</span>
-                    <a href="#">Panduan</a>
-                    <span>•</span>
-                    <a href="#">Hubungi Kami</a>
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="container">
+                    <div class="footer-links">
+                        <a href="php/tentang_kami.php">Tentang Kami</a>
+                        <span>•</span>
+                        <a href="#">Blog</a>
+                        <span>•</span>
+                        <a href="#">Kebijakan Privasi</a>
+                        <span>•</span>
+                        <a href="#">Kebijakan Cookie</a>
+                        <span>•</span>
+                        <a href="#">Panduan</a>
+                        <span>•</span>
+                        <a href="#">Hubungi Kami</a>
+                    </div>
+                    <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
                 </div>
-                <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
             </div>
-        </div>
     </footer>
 
     <!-- Bootstrap 5.3 JS Bundle -->
