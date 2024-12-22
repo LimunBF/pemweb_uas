@@ -12,8 +12,10 @@ try {
    
    $locations = $stmt->fetchAll(PDO::FETCH_COLUMN);
    
+   header('Content-Type: application/json');
    echo json_encode($locations);
 } catch(PDOException $e) {
+   header('Content-Type: application/json');
    echo json_encode(['error' => $e->getMessage()]);
 }
 ?> 
