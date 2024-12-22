@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^pemweb_uas/?$ index.php [NC]
+RewriteRule ^pemweb_uas/([0-9_-]+)/?$ index.php?id=$1 [NC,L]

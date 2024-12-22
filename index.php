@@ -8,34 +8,33 @@ include_once 'connection/connect.php';
 // Get the database connection
 $pdo = getDatabaseConnection();
 
-// Query untuk mengambil 8 events terbaru
-$stmt = $pdo->prepare("SELECT event_id, title, event_date, location, organizer_name, event_image_path 
-                       FROM events 
-                       ORDER BY event_date ASC 
-                       LIMIT 8");
+// Ambil parameter pencarian dari input (jika ada)
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Query untuk mengambil event berdasarkan pencarian judul
+$query = "SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events";
+if (!empty($search)) {
+    $query .= " WHERE title LIKE :search";
+}
+$query .= " ORDER BY event_date ASC LIMIT 8";
+
+$stmt = $pdo->prepare($query);
+if (!empty($search)) {
+    $stmt->bindValue(':search', "%$search%");
+}
 $stmt->execute();
 $events = $stmt->fetchAll();
 
 // Periksa apakah pengguna sudah login
 if ($isLoggedIn) {
-    // Ambil user_id dari session
     $userId = $_SESSION['user_id'];
-
-    // Query untuk mengambil nama pengguna berdasarkan user_id
     $stmtUser = $pdo->prepare("SELECT name FROM users WHERE user_id = :user_id LIMIT 1");
     $stmtUser->execute(['user_id' => $userId]);
     $user = $stmtUser->fetch();
-
-    // Pastikan nama pengguna ditemukan
     $userName = $user ? htmlspecialchars($user['name']) : 'Pengguna';
 } else {
     $userName = null;
 }
-
-// Query untuk mengambil 3 event dengan gambar secara acak
-$stmtTopEvents = $pdo->prepare("SELECT event_id, event_image_path FROM events WHERE event_image_path IS NOT NULL ORDER BY RAND() LIMIT 3");
-$stmtTopEvents->execute();
-$topEvents = $stmtTopEvents->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -60,16 +59,16 @@ $topEvents = $stmtTopEvents->fetchAll();
                 <!-- Logo -->
                 <a class="navbar-brand fw-bold" href="#">BÉLI TIKÉT</a>
                 <!-- Search Bar -->
-                <div class="mx-auto" style="width: 40%;">
+                <form class="d-flex mx-auto" style="width: 40%;">
                     <div class="input-group">
-                        <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
-                            id="searchInput" aria-label="Search">
-                        <button class="btn btn-primary" type="button">
-                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16"
-                                height="16">
+                    <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
+       id="searchInput" aria-label="Search">
+
+                        <button class="btn btn-primary" type="submit">
+                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
                         </button>
                     </div>
-                </div>
+                </form>
 
                 <!-- Menu Kanan -->
                 <div class="d-flex align-items-center gap-3">
@@ -108,51 +107,6 @@ $topEvents = $stmtTopEvents->fetchAll();
     </header>
 
     <div class="container py-4">
-
-        <!-- Header Carousel -->
-        <div id="headerCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
-            <?php
-            // Query untuk mengambil 3 event dengan gambar secara acak
-            $stmtCarousel = $pdo->prepare("SELECT event_id, event_image_path FROM events WHERE event_image_path IS NOT NULL ORDER BY RAND() LIMIT 3");
-            $stmtCarousel->execute();
-            $carouselImages = $stmtCarousel->fetchAll();
-            ?>
-
-            <!-- Indicators -->
-            <div class="carousel-indicators">
-                <?php foreach ($carouselImages as $index => $image): ?>
-                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="<?php echo $index; ?>"
-                    class="<?php echo $index === 0 ? 'active' : ''; ?>"
-                    aria-current="<?php echo $index === 0 ? 'true' : 'false'; ?>"
-                    aria-label="Slide <?php echo $index + 1; ?>"></button>
-                <?php endforeach; ?>
-            </div>
-
-            <!-- Carousel Items -->
-            <div class="carousel-inner">
-                <?php foreach ($carouselImages as $index => $image): ?>
-                <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
-                    <!-- Tambahkan link agar gambar bisa diklik -->
-                    <a href="php/tiket-page.php?event_id=<?php echo $image['event_id']; ?>">
-                        <img src="<?php echo htmlspecialchars($image['event_image_path']); ?>" class="d-block w-100"
-                            alt="Event Image">
-                    </a>
-                </div>
-                <?php endforeach; ?>
-            </div>
-
-            <!-- Controls -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#headerCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#headerCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-
-
         <!-- Event Pilihan Section -->
         <h3 class="fw-bold mb-4">Event Pilihan</h3>
         <div class="row g-4">
@@ -160,8 +114,7 @@ $topEvents = $stmtTopEvents->fetchAll();
             <?php foreach ($events as $event): ?>
             <div class="col-md-3">
                 <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>" class="card event-card">
-                    <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" class="card-img-top"
-                        alt="Event Image">
+                    <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" class="card-img-top" alt="Event Image">
                     <div class="card-body">
                         <h6 class="card-title fw-bold"><?php echo htmlspecialchars($event['title']); ?></h6>
                         <p class="card-text mb-1 text-muted">
@@ -188,6 +141,8 @@ $topEvents = $stmtTopEvents->fetchAll();
                 Lihat Semua Event
             </a>
         </div>
+    </div>
+
 
         <!-- Top Events Section -->
         <div class="container my-5 py-4" style="background-color: #0b2341; color: white; border-radius: 10px;">
@@ -267,6 +222,24 @@ $topEvents = $stmtTopEvents->fetchAll();
     <!-- Bootstrap 5.3 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="javascript/navbar.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', async (e) => {
+    const searchQuery = e.target.value.trim();
+
+    // Kirim permintaan ke server untuk pencarian
+    const response = await fetch(`?search=${encodeURIComponent(searchQuery)}`);
+    const html = await response.text();
+
+    // Ambil elemen yang memuat daftar event dan perbarui kontennya
+    const eventContainer = document.querySelector('.row.g-4');
+    const parser = new DOMParser();
+    const newDoc = parser.parseFromString(html, 'text/html');
+    const newEvents = newDoc.querySelector('.row.g-4').innerHTML;
+
+    eventContainer.innerHTML = newEvents;
+});
+
+    </script>
 </body>
 
 </html>
