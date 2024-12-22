@@ -52,47 +52,59 @@ try {
 
 <!-- HEADER DAN NAVIGASI -->
 <header>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <!-- Logo -->
-            <a class="navbar-brand fw-bold" href="/pemweb_uas/index.php">LOKÉT</a>
-            <!-- Search Bar -->
-            <div class="mx-auto" style="width: 40%;">
-                <div class="input-group">
-                    <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
-                        id="searchInput" aria-label="Search">
-                    <button class="btn btn-primary" type="button">
-                        <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
-                    </button>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
+                <!-- Search Bar -->
+                <div class="mx-auto" style="width: 40%;">
+                    <div class="input-group">
+                        <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
+                            id="searchInput" aria-label="Search">
+                        <button class="btn btn-primary" type="button">
+                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Kanan -->
+                <div class="d-flex align-items-center">
+                    <!-- Buat Event -->
+                    <a href="#" class="icon-link me-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="Buat Event">
+                        Buat Event
+                    </a>
+
+                    <!-- Jelajah -->
+                    <a href="jelajah.php" class="icon-link me-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
+                        Jelajah
+                    </a>
+
+                    <?php if (!$isLoggedIn): ?>
+                        <!-- Daftar dan Masuk -->
+                        <a href="php/register.php" class="btn btn-outline-light me-2">Daftar</a>
+                        <a href="php/login.php" class="btn btn-primary">Masuk</a>
+                    <?php else: ?>
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown">
+                            <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li class="dropdown-header">Profil Anda</li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
+                                <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
+                                <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                                <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
-
-            <!-- Menu Kanan -->
-            <div class="d-flex align-items-center">
-                <?php if (!$isLoggedIn): ?>
-                    <!-- Daftar dan Masuk -->
-                    <a href="../php/register.php" class="btn btn-outline-light me-2">Daftar</a>
-                    <a href="../php/login.php" class="btn btn-primary">Masuk</a>
-                <?php else: ?>
-                    <!-- Profile Dropdown -->
-                    <div class="dropdown">
-                        <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <li class="dropdown-header">Profil Anda</li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
-                            <li><a class="dropdown-item" href="#">Informasi Dasar</a></li>
-                            <li><a class="dropdown-item" href="#">Pengaturan</a></li>
-                            <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
-                        </ul>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </nav>
+        </nav>
 </header>
 
 <!-- MAIN CONTENT -->
@@ -103,7 +115,7 @@ try {
             <div class="col-md-8">
                 <div class="bg-light p-4 rounded">
                     <h1 class="fw-bold"><?= htmlspecialchars($event['title']) ?></h1>
-                    <img src="<?= htmlspecialchars($event['event_image_path']) ?>" class="img-fluid rounded mt-3" alt="Banner Event">
+                    <img src="<?= htmlspecialchars('../' . $event['event_image_path']) ?>" class="img-fluid rounded mt-3" alt="Banner Event">
                 </div>
 
                 <!-- Tab Navigasi -->
@@ -147,7 +159,7 @@ try {
 
             <!-- Deskripsi Event -->
             <div class="col-md-4">
-                <div class="event-card p-4 rounded shadow text-center">
+                <div class="event-card p-4 rounded shadow text-center mt-4">
                     <h4 class="fw-bold"><?= htmlspecialchars($event['title']) ?></h4>
                     <div class="event-details my-3">
                         <p><i class="bi bi-calendar-event"></i> <?= date("d M Y", strtotime($event['event_date'])) ?></p>
@@ -166,43 +178,52 @@ try {
     </main>
 </div>
 
-<!-- FOOTER -->
+<!-- Footer -->
 <footer>
-    <div class="footer">
-        <!-- Keamanan dan Privasi -->
-        <h5 class="text-white mb-3">Keamanan dan Privasi</h5>
-        <img src="assets/images/logo_bsi.png" alt="Logo BSI" class="mb-4">
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                   
+                <!-- Keamanan dan Privasi -->
+                <div class="security-section text-center mt-4 align-items-center">
+                    <h5 class="justify-content-center text-center">Keamanan dan Privasi</h5>
+                    <img src="../assets/images/logo_bsi.png" alt="Logo BSI" class="mt-2 mb-4">
+                </div>
 
-        <!-- Social Media Icons -->
-        <div class="footer-icons">
-            <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
-            <a href="#" target="_blank"><i class="bi bi-tiktok"></i></a>
-            <a href="#" target="_blank"><i class="bi bi-x"></i></a>
-            <a href="#" target="_blank"><i class="bi bi-linkedin"></i></a>
-            <a href="#" target="_blank"><i class="bi bi-youtube"></i></a>
-            <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
-        </div>
-    </div>
-
-    <!-- Footer Bottom Section -->
-    <div class="footer-bottom">
-        <div class="container">
-            <div class="d-inline-flex flex-wrap justify-content-center align-items-center" style="gap: 10px;">
-                <a href="php/our-team.php" style="text-decoration: none; color: #d1d9e6;">Tentang Kami</a>
-                <span>•</span>
-                <a href="#" style="text-decoration: none; color: #d1d9e6;">Blog</a>
-                <span>•</span>
-                <a href="#" style="text-decoration: none; color: #d1d9e6;">Kebijakan Privasi</a>
-                <span>•</span>
-                <a href="#" style="text-decoration: none; color: #d1d9e6;">Kebijakan Cookie</a>
-                <span>•</span>
-                <a href="#" style="text-decoration: none; color: #d1d9e6;">Panduan</a>
-                <span>•</span>
-                <a href="#" style="text-decoration: none; color: #d1d9e6;">Hubungi Kami</a>
+                <!-- Social Media Icons -->
+                <div class="social-media-section text-center">
+                    <h5 class="justify-content-center text-center">Ikuti Kami</h5>
+                    <div class="social-icons mt-3">
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-tiktok"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                    </div>
+                </div>
             </div>
-            <p class="mb-0 mt-2">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
         </div>
-    </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-links">
+                    <a href="php/tentang_kami.php">Tentang Kami</a>
+                    <span>•</span>
+                    <a href="#">Blog</a>
+                    <span>•</span>
+                    <a href="#">Kebijakan Privasi</a>
+                    <span>•</span>
+                    <a href="#">Kebijakan Cookie</a>
+                    <span>•</span>
+                    <a href="#">Panduan</a>
+                    <span>•</span>
+                    <a href="#">Hubungi Kami</a>
+                </div>
+                <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
+            </div>
+        </div>
 </footer>
 
 <!-- Bootstrap JS -->
