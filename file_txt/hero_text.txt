@@ -1,0 +1,2 @@
+            <h1 class="display-4 fw-bold mb-4">TENTANG KAMI</h1>
+            <p class="lead">BÉLI TIKÉT merupakan teknologi asal Indonesia yang memiliki misi memberikan teknologi digital bagi penyelenggara event dari berbagai skala.</p>

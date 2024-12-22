@@ -1,0 +1,77 @@
+.hero-section {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/group/Foto_Formal.jpeg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 120px 0;
+    text-align: center;
+    position: relative;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+.breadcrumb {
+    background: transparent;
+}
+
+.breadcrumb-item a {
+    color: #ffcc00;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #fff;
+}
+
+.breadcrumb-item+.breadcrumb-item::before {
+    color: white;
+}
+
+.content-section {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+}
+
+.content-section p {
+    color: #333;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.feature-list {
+    margin-top: 30px;
+    padding-left: 40px;
+}
+
+.feature-list li {
+    color: #333;
+    margin-bottom: 15px;
+    line-height: 1.6;
+    position: relative;
+}
+
+.feature-list li::before {
+    content: "\2022";
+    color: #ffcc00;
+    font-size: 1.5rem;
+    position: absolute;
+    left: -25px;
+    top: 0;
+}
+
+.content-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 40px;
+}

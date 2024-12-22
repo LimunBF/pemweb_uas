@@ -1,0 +1,9 @@
+<p>BÉLI TIKÉT adalah platform yang memiliki Ticketing Management Service (TMS) teknologi unggul dalam mendukung seluruh penyelenggaraan event mulai dari distribusi & manajemen tiket, hingga penyediaan laporan analisa event di akhir acara.</p>
+<p>Beberapa teknologi yang kami sediakan siap untuk memfasilitasi penyelenggara event dalam setiap tahap persiapan yang meliputi:</p>
+<ul class="feature-list">
+    <li>Distributor tiket terlengkap yang telah bekerja sama dengan BÉLI TIKÉT untuk menjual tiket Anda.</li>
+    <li>Sistem pembayaran yang beragam dan aman memberikan kemudahan kepada calon pembeli, untuk mendapatkan konversi yang lebih tinggi.</li>
+    <li>Gate management yang paling aman dan nyaman untuk akses saat event berlangsung. Sehingga, event dengan jumlah penonton yang besar dapat ditangani dengan mudah.</li>
+    <li>Sistem analisis data yang lengkap dan komprehensif setelah acara berlangsung untuk memudahkan penyelenggara event dalam merumuskan strategi event selanjutnya.</li>
+</ul>
+<p class="mt-4">Sudah ada ratusan event yang bekerja sama dengan kami dan semuanya tersebar di seluruh Indonesia. Kini, saatnya meramaikan event Anda pada dunia untuk membawa penonton yang lebih banyak lagi bersama kami!</p>
