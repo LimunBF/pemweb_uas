@@ -21,11 +21,6 @@
         padding-top: 15px;
     }
 
-    .form-check-input {
-        width: 3em;
-        height: 1.5em;
-    }
-
     .dropdown-toggle {
         border: 1px solid #ddd;
         padding: 8px 15px;
@@ -36,6 +31,43 @@
         border-top-right-radius: 10px;
         height: 200px;
         object-fit: cover;
+    }
+
+    .lokasi-header {
+        transition: all 0.3s
+    }
+
+    .waktu-header {
+        transition: all 0.3s ease;
+    }
+
+    .waktu-header.active i {
+        transform: rotate(180deg);
+    }
+
+    .month-list {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .month-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        color: #666;
+        transition: all 0.2s ease;
+    }
+
+    .month-item:hover {
+        color: #ff4d00;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .month-item.selected {
+        color: #ff4d00;
+        font-weight: 500;
+        background-color: #fff0eb;
+        border-radius: 4px;
     }
     </style>
 </head>
@@ -48,12 +80,68 @@
         $pdo = new PDO("mysql:host=localhost;dbname=loket_com", "root", "");
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        $stmt = $pdo->prepare("SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events ORDER BY event_date ASC");
+        // Ambil nama pengguna jika sudah login
+        if ($isLoggedIn) {
+            $userId = $_SESSION['user_id'];
+            $stmtUser = $pdo->prepare("SELECT name FROM users WHERE user_id = :user_id LIMIT 1");
+            $stmtUser->execute(['user_id' => $userId]);
+            $user = $stmtUser->fetch();
+            $userName = $user ? htmlspecialchars($user['name']) : 'Pengguna';
+        } else {
+            $userName = null;
+        }
+        
+        // Get parameters
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'date_asc';
+        $location = isset($_GET['location']) ? $_GET['location'] : '';
+        $month = isset($_GET['month']) ? $_GET['month'] : '';
+        
+        // Base query
+        $baseQuery = "SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events";
+        
+        // Add WHERE conditions
+        $whereConditions = [];
+        $params = [];
+        
+        if ($location) {
+            $whereConditions[] = "location = :location";
+            $params[':location'] = $location;
+        }
+        
+        if ($month) {
+            $whereConditions[] = "DATE_FORMAT(event_date, '%Y-%m') = :month";
+            $params[':month'] = $month;
+        }
+        
+        if (!empty($whereConditions)) {
+            $baseQuery .= " WHERE " . implode(" AND ", $whereConditions);
+        }
+        
+        // Add ORDER BY clause
+        switch($sort) {
+            case 'title_asc':
+                $baseQuery .= " ORDER BY title ASC";
+                break;
+            case 'title_desc':
+                $baseQuery .= " ORDER BY title DESC";
+                break;
+            case 'date_desc':
+                $baseQuery .= " ORDER BY event_date DESC";
+                break;
+            default: // date_asc
+                $baseQuery .= " ORDER BY event_date ASC";
+        }
+        
+        $stmt = $pdo->prepare($baseQuery);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
         $stmt->execute();
         $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch(PDOException $e) {
         echo "Error: " . $e->getMessage();
         $events = [];
+        $userName = 'Pengguna';
     }
 ?>
 
@@ -62,7 +150,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <!-- Logo -->
-            <a class="navbar-brand fw-bold" href="index.php">LOKÉT</a>
+            <a class="navbar-brand fw-bold" href="#">BÉLI TIKÉT</a>
             <!-- Search Bar -->
             <div class="mx-auto" style="width: 40%;">
                 <div class="input-group">
@@ -75,33 +163,29 @@
             </div>
 
             <!-- Menu Kanan -->
-            <div class="d-flex align-items-center">
-                <!-- Buat Event -->
-                <a href="#" class="icon-link me-3">
-                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="Buat Event">
-                    Buat Event
-                </a>
-
-                <!-- Jelajah -->
-                <a href="jelajah.php" class="icon-link me-3">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
-                    Jelajah
+            <div class="d-flex align-items-center gap-3">
+                <!-- Home -->
+                <a href="index.php" class="btn btn-outline-light d-flex align-items-center gap-2 px-3">
+                    <i class="bi bi-house"></i>
+                    <span>Home</span>
                 </a>
 
                 <?php if (!$isLoggedIn): ?>
                     <!-- Daftar dan Masuk -->
-                    <a href="php/register.php" class="btn btn-outline-light me-2">Daftar</a>
-                    <a href="php/login.php" class="btn btn-primary">Masuk</a>
+                    <a href="php/register.php" class="btn btn-outline-light px-3">Daftar</a>
+                    <a href="php/login.php" class="btn btn-primary px-3">Masuk</a>
                 <?php else: ?>
                     <!-- Profile Dropdown -->
                     <div class="dropdown">
-                        <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle fa-2x text-white"></i>
+                        <a href="#" class="btn btn-light d-flex align-items-center gap-2 px-3" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fas fa-user-circle fa-lg"></i>
+                            <span><?php echo $userName ? htmlspecialchars($userName) : 'Profil'; ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <li class="dropdown-header">Profil Anda</li>
+                            <li class="dropdown-header">Halo, <?php echo $userName ? htmlspecialchars($userName) : 'Pengguna'; ?></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
+                            <li><a class="dropdown-item" href="php/riwayat.php">Tiket Saya</a></li>
                             <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
                             <li><a class="dropdown-item" href="#">Pengaturan</a></li>
                             <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
@@ -120,42 +204,62 @@
                 <div class="card-body">
                     <h5 class="card-title d-flex justify-content-between">
                         Filter
-                        <i class="fas fa-sync-alt"></i>
+                        <i class="fas fa-sync-alt" style="color: #ff4d00; cursor: pointer;" id="resetFilter"></i>
                     </h5>
                     
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span>Event Online</span>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="eventOnlineSwitch">
+                    <!-- Lokasi Section -->
+                    <div class="mt-4 pb-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center lokasi-header" style="cursor: pointer;">
+                            <h6 class="mb-0" style="color: <?php echo isset($_GET['location']) ? '#ff4d00' : 'inherit'; ?>">Lokasi</h6>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        
+                        <div class="lokasi-content mt-3" style="display: none;">
+                            <div class="search-box mb-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Cari lokasi ..." id="searchLocation">
+                                    <span class="input-group-text bg-white border-start-0">
+                                        <i class="fas fa-search text-muted"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="location-list" id="locationList">
+                                <!-- Locations will be loaded here -->
+                            </div>
                         </div>
                     </div>
 
-                    <div class="filter-section mt-3">
-                        <h6 class="d-flex justify-content-between">
-                            Lokasi
+                    <!-- Waktu Section -->
+                    <div class="mt-4 pb-3">
+                        <div class="d-flex justify-content-between align-items-center waktu-header" style="cursor: pointer;">
+                            <h6 class="mb-0" style="color: <?php echo isset($_GET['month']) ? '#ff4d00' : 'inherit'; ?>">Waktu</h6>
                             <i class="fas fa-chevron-down"></i>
-                        </h6>
-                    </div>
-
-                    <div class="filter-section mt-3">
-                        <h6 class="d-flex justify-content-between">
-                            Format
-                            <i class="fas fa-chevron-down"></i>
-                        </h6>
-                    </div>
-
-                    <div class="filter-section mt-3">
-                        <h6 class="d-flex justify-content-between">
-                            Topik
-                            <i class="fas fa-chevron-down"></i>
-                        </h6>
-                    </div>
-
-                    <div class="filter-section mt-3">
-                        <h6 class="d-flex justify-content-between">
-                            Waktu
-                            <i class="fas fa-chevron-down"></i>
-                        </h6>
+                        </div>
+                        
+                        <div class="waktu-content mt-3" style="display: none;">
+                            <div class="month-list" id="monthList">
+                                <?php
+                                // Array untuk nama bulan dalam bahasa Indonesia
+                                $monthNames = [
+                                    1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                ];
+                                
+                                $currentYear = date('Y');
+                                
+                                // Loop untuk setiap bulan dalam tahun ini
+                                for ($month = 1; $month <= 12; $month++) {
+                                    $monthValue = sprintf("%d-%02d", $currentYear, $month);
+                                    $isSelected = isset($_GET['month']) && $_GET['month'] === $monthValue;
+                                    ?>
+                                    <div class="month-item <?php echo $isSelected ? 'selected' : ''; ?>" 
+                                         data-value="<?php echo $monthValue; ?>">
+                                        <?php echo $monthNames[$month]; ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -164,13 +268,31 @@
         <div class="col-md-9">
             <div class="d-flex justify-content-end mb-4">
                 <div class="dropdown">
+                    <?php
+                    $sort = isset($_GET['sort']) ? $_GET['sort'] : 'date_asc';
+                    $sortText = [
+                        'date_asc' => 'Waktu Mulai (Terdekat)',
+                        'date_desc' => 'Waktu Mulai (Terjauh)',
+                        'title_asc' => 'Nama Event (A-Z)',
+                        'title_desc' => 'Nama Event (Z-A)'
+                    ];
+                    ?>
                     <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        Waktu Mulai (Terdekat)
+                        <?php echo $sortText[$sort] ?? 'Waktu Mulai (Terdekat)'; ?>
                     </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Waktu Mulai (Terdekat)</a></li>
-                        <li><a class="dropdown-item" href="#">Harga (Terendah)</a></li>
-                        <li><a class="dropdown-item" href="#">Harga (Tertinggi)</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item <?php echo $sort === 'date_asc' ? 'active' : ''; ?>" 
+                               href="?sort=date_asc<?php echo isset($_GET['location']) ? '&location='.$_GET['location'] : ''; ?>">
+                               Waktu Mulai (Terdekat)</a></li>
+                        <li><a class="dropdown-item <?php echo $sort === 'date_desc' ? 'active' : ''; ?>" 
+                               href="?sort=date_desc<?php echo isset($_GET['location']) ? '&location='.$_GET['location'] : ''; ?>">
+                               Waktu Mulai (Terjauh)</a></li>
+                        <li><a class="dropdown-item <?php echo $sort === 'title_asc' ? 'active' : ''; ?>" 
+                               href="?sort=title_asc<?php echo isset($_GET['location']) ? '&location='.$_GET['location'] : ''; ?>">
+                               Nama Event (A-Z)</a></li>
+                        <li><a class="dropdown-item <?php echo $sort === 'title_desc' ? 'active' : ''; ?>" 
+                               href="?sort=title_desc<?php echo isset($_GET['location']) ? '&location='.$_GET['location'] : ''; ?>">
+                               Nama Event (Z-A)</a></li>
                     </ul>
                 </div>
             </div>
@@ -258,5 +380,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="javascript/navbar.js"></script>
+<script src="javascript/jelajah.js"></script>
 </body>
 </html> 

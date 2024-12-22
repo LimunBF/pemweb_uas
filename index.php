@@ -8,8 +8,11 @@ include_once 'connection/connect.php';
 // Get the database connection
 $pdo = getDatabaseConnection();
 
-// Query untuk mengambil events
-$stmt = $pdo->prepare("SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events LIMIT 10");
+// Query untuk mengambil 8 events terbaru
+$stmt = $pdo->prepare("SELECT event_id, title, event_date, location, organizer_name, event_image_path 
+                       FROM events 
+                       ORDER BY event_date ASC 
+                       LIMIT 8");
 $stmt->execute();
 $events = $stmt->fetchAll();
 
@@ -172,6 +175,13 @@ if ($isLoggedIn) {
             <?php else: ?>
             <p class="text-muted">Tidak ada event tersedia saat ini.</p>
             <?php endif; ?>
+        </div>
+
+        <!-- Tombol Lihat Semua -->
+        <div class="text-center mt-4">
+            <a href="jelajah.php" class="btn btn-outline-primary px-4">
+                Lihat Semua Event
+            </a>
         </div>
 
         <!-- Top Events Section -->
