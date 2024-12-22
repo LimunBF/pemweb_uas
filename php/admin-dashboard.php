@@ -20,27 +20,37 @@ if ($conn->connect_error) {
     die("Koneksi ke database gagal: " . $conn->connect_error);
 }
 
-// Ambil data tiket terlaris dari database
 $topTicketsData = [];
-$sql = "SELECT ticket_id, SUM(quantity) as total_quantity FROM purchase_history GROUP BY ticket_id ORDER BY total_quantity DESC LIMIT 5";
+$sql = "
+    SELECT 
+        events.title AS event_title,
+        tickets.ticket_type AS ticket_type,
+        SUM(purchase_history.quantity) AS total_quantity
+    FROM 
+        purchase_history
+    INNER JOIN 
+        events ON purchase_history.event_id = events.event_id
+    INNER JOIN 
+        tickets ON purchase_history.ticket_id = tickets.ticket_id
+    GROUP BY 
+        events.title, tickets.ticket_type
+    ORDER BY 
+        total_quantity DESC
+    LIMIT 5";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $topTicketsData[] = [
-            'ticket_id' => $row['ticket_id'],
+            'label' => $row['event_title'] . ' - ' . $row['ticket_type'], // Gabungkan event title dan ticket type
             'quantity' => $row['total_quantity']
         ];
     }
 }
 
-// Berikan label statis sementara untuk tampilan
-$ticketLabels = [];
-$ticketQuantities = [];
-foreach ($topTicketsData as $index => $ticket) {
-    $ticketLabels[] = "Tiket " . ($index + 1); // Ganti dengan nama tiket jika ada
-    $ticketQuantities[] = $ticket['quantity'];
-}
+// Ekstrak label dan data untuk grafik
+$ticketLabels = array_column($topTicketsData, 'label');
+$ticketQuantities = array_column($topTicketsData, 'quantity');
 ?>
 
 <!DOCTYPE html>
