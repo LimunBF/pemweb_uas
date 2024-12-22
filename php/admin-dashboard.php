@@ -20,7 +20,29 @@ if ($conn->connect_error) {
     die("Koneksi ke database gagal: " . $conn->connect_error);
 }
 
+// Ambil data tiket terlaris dari database
+$topTicketsData = [];
+$sql = "SELECT ticket_id, SUM(quantity) as total_quantity FROM purchase_history GROUP BY ticket_id ORDER BY total_quantity DESC LIMIT 5";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $topTicketsData[] = [
+            'ticket_id' => $row['ticket_id'],
+            'quantity' => $row['total_quantity']
+        ];
+    }
+}
+
+// Berikan label statis sementara untuk tampilan
+$ticketLabels = [];
+$ticketQuantities = [];
+foreach ($topTicketsData as $index => $ticket) {
+    $ticketLabels[] = "Tiket " . ($index + 1); // Ganti dengan nama tiket jika ada
+    $ticketQuantities[] = $ticket['quantity'];
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -33,50 +55,19 @@ if ($conn->connect_error) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="../css/admin-dashboard.css">
     <link rel="stylesheet" type="text/css" href="../css/navbar_footer.css">
-    <style>
-        /* Custom Pagination Styling */
-        .custom-pagination .page-item .custom-page-link {
-            background-color: #152c52;
-            color: #a0b8d8;
-            border: none;
-            padding: 10px 15px;
-            margin: 0 5px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .custom-pagination .page-item .custom-page-link:hover {
-            background-color: #2f80ed;
-            color: white;
-        }
-
-        .custom-pagination .page-item.active .custom-page-link {
-            background-color: #0b2341;
-            color: white;
-            font-weight: bold;
-            border: 2px solid #2f80ed;
-        }
-    </style>
 </head>
 
 <body>
     <header>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <!-- Logo -->
-            <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
-            <!-- Menu Kanan -->
-            <div style="color: white;" class="d-flex align-items-center">
-            </div>
-        </div>
-        <div class="d-flex align-items-center gap-3" href="#">
-                <!-- Jelajah -->
-                <a class="navbar-brand">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
+                <div class="d-flex align-items-center gap-3">
                     <span>Admin</span>
-                </a>
+                </div>
             </div>
-    </nav>
+        </nav>
     </header>
 
     <div class="container my-4">
@@ -164,23 +155,11 @@ if ($conn->connect_error) {
         }
         ?>
 
-        <!-- Grafik Dinamis -->
+        <!-- Grafik Tiket Terlaris -->
         <div class="mb-4">
             <h4>Tiket Terlaris</h4>
             <canvas id="topTicketsChart" style="width: 100%; height: 400px;"></canvas>
         </div>
-        <div class="mb-4">
-            <h4>Penjualan Bulanan</h4>
-            <canvas id="monthlySalesChart" style="width: 100%; height: 400px;"></canvas>
-        </div>
-
-        <div class="container mt-5">
-
-    </div>
-
-        <!-- Navigasi untuk About Us -->
-        <h2 class="mt-5">Edit Tentang Kami</h2>
-        <a href="tentang_kami.php" class="btn btn-info">Go To Tentang Kami</a>
     </div>
 
     <footer>
@@ -210,127 +189,40 @@ if ($conn->connect_error) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
-        //fungsi pop-up hapus event
-        function hapusEvent(eventId) {
-            if (confirm('Yakin akan menghapus event ini?')) {
-                fetch('hapus-event.php', { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
-                    body: new URLSearchParams({ event_id: eventId }) 
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Event berhasil dihapus');
-                        location.reload();
-                    } else {
-                        console.error('Kesalahan respons:', data);
-                        alert('Terjadi kesalahan saat menghapus event');
+        // Data Tiket dari PHP
+        const ticketLabels = <?php echo json_encode($ticketLabels); ?>;
+        const ticketData = <?php echo json_encode($ticketQuantities); ?>;
+
+        // Render Chart
+        const ctxTopTickets = document.getElementById('topTicketsChart').getContext('2d');
+        const topTicketsChart = new Chart(ctxTopTickets, {
+            type: 'bar',
+            data: {
+                labels: ticketLabels,
+                datasets: [{
+                    label: 'Tiket Terjual',
+                    data: ticketData,
+                    backgroundColor: ['#0b2341', '#1d4d7e', '#2f80ed', '#0b2341', '#1d4d7e'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
                     }
-                })
-                .catch(error => {
-                    console.error('Error saat parsing JSON:', error);
-                    alert('Terjadi kesalahan saat memproses permintaan.');
-                });
-            }
-        }
-        // Simpan perubahan konten home
-        document.querySelectorAll('.save-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const id = this.getAttribute('data-id');
-                const judul = document.getElementById(`judul-${id}`).value;
-                const deskripsi = document.getElementById(`deskripsi-${id}`).value;
-
-                fetch('update_konten_home.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id, judul, deskripsi })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Perubahan berhasil disimpan');
-                    } else {
-                        alert('Terjadi kesalahan saat menyimpan perubahan');
-                    }
-                });
-            });
-        });
-        document.addEventListener("DOMContentLoaded", function () {
-            // Dummy data untuk Tiket Terlaris
-            fetch('get_top_tickets.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        const ticketLabels = data.map(item => item.ticket_name);
-                        const ticketData = data.map(item => item.total_sold);
-
-                        const ctxTopTickets = document.getElementById('topTicketsChart').getContext('2d');
-                        const topTicketsChart = new Chart(ctxTopTickets, {
-                            type: 'bar',
-                            data: {
-                                labels: ticketLabels,
-                                datasets: [{
-                                    label: 'Tiket Terjual',
-                                    data: ticketData,
-                                    backgroundColor: ['#0b2341', '#2f80ed', '#1e3c72', '#1e3c72', '#2f80ed'],
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    legend: {
-                                        display: true,
-                                        position: 'top',
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            });
-
-            // Dummy data untuk Penjualan Bulanan
-            const monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const monthlyData = [300, 400, 350, 500, 450, 600, 550, 700, 400, 800, 750, 900]; // Data dummy, ganti dengan data dari database
-
-            const ctxMonthlySales = document.getElementById('monthlySalesChart').getContext('2d');
-            const monthlySalesChart = new Chart(ctxMonthlySales, {
-                type: 'line',
-                data: {
-                    labels: monthlyLabels,
-                    datasets: [{
-                        label: 'Penjualan Bulanan',
-                        data: monthlyData,
-                        borderColor: '#FF6384',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        fill: true,
-                    }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
         });
     </script>
 </body>
 
 </html>
+
 <?php $conn->close(); ?>
