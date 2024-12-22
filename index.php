@@ -86,7 +86,7 @@ if ($isLoggedIn) {
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                             <li class="dropdown-header">Halo, <?php echo $userName ? htmlspecialchars($userName) : 'Pengguna'; ?></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
+                            <li><a class="dropdown-item" href="php/riwayat.php">Tiket Saya</a></li>
                             <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
                             <li><a class="dropdown-item" href="#">Pengaturan</a></li>
                             <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>

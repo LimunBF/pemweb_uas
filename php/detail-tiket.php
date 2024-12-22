@@ -303,7 +303,40 @@ try {
             console.error("Error:", error);
             alert("Terjadi kesalahan. Silakan coba lagi.");
         });
-});
+        
+        //Memasukkan data ke table orders
+        fetch("../php/insert_order.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                tickets: selectedTickets,  // selectedTickets adalah array tiket yang dipilih user
+            }),
+        })
+        .then(response => {
+            // Periksa apakah respons sukses (status 2xx)
+            if (!response.ok) {
+                throw new Error("Server error, status: " + response.status);
+            }
+            return response.json();  // Parse respons sebagai JSON
+        })
+        .then(data => {
+            console.log('Update Tickets Response:', data);
+            if (data.success) {
+                alert("Order berhasil dibuat! ID Order: " + data.order_id);
+                // Arahkan ke halaman konfirmasi pembayaran
+                //window.location.href = "payment.php?order_id=" + data.order_id;
+            } else {
+                alert("Gagal membuat order: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Terjadi kesalahan. Silakan coba lagi.");
+        });
+
+    });
 
 </script>
 
