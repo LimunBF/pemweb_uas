@@ -35,6 +35,10 @@ if ($isLoggedIn) {
 } else {
     $userName = null;
 }
+// Query untuk mengambil 3 event dengan gambar secara acak
+$stmtTopEvents = $pdo->prepare("SELECT event_id, event_image_path FROM events WHERE event_image_path IS NOT NULL ORDER BY RAND() LIMIT 3");
+$stmtTopEvents->execute();
+$topEvents = $stmtTopEvents->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -59,16 +63,16 @@ if ($isLoggedIn) {
                 <!-- Logo -->
                 <a class="navbar-brand fw-bold" href="#">BÉLI TIKÉT</a>
                 <!-- Search Bar -->
-                <form class="d-flex mx-auto" style="width: 40%;">
+                <div class="mx-auto" style="width: 40%;">
                     <div class="input-group">
                     <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
-       id="searchInput" aria-label="Search">
-
-                        <button class="btn btn-primary" type="submit">
-                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
+                    id="searchInput" aria-label="Search">
+                        <button class="btn btn-primary" type="button">
+                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16"
+                                height="16">
                         </button>
                     </div>
-                </form>
+                </div>
 
                 <!-- Menu Kanan -->
                 <div class="d-flex align-items-center gap-3">
@@ -107,6 +111,51 @@ if ($isLoggedIn) {
     </header>
 
     <div class="container py-4">
+
+        <!-- Header Carousel -->
+        <div id="headerCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+            <?php
+            // Query untuk mengambil 3 event dengan gambar secara acak
+            $stmtCarousel = $pdo->prepare("SELECT event_id, event_image_path FROM events WHERE event_image_path IS NOT NULL ORDER BY RAND() LIMIT 3");
+            $stmtCarousel->execute();
+            $carouselImages = $stmtCarousel->fetchAll();
+            ?>
+
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+                <?php foreach ($carouselImages as $index => $image): ?>
+                <button type="button" data-bs-target="#headerCarousel" data-bs-slide-to="<?php echo $index; ?>"
+                    class="<?php echo $index === 0 ? 'active' : ''; ?>"
+                    aria-current="<?php echo $index === 0 ? 'true' : 'false'; ?>"
+                    aria-label="Slide <?php echo $index + 1; ?>"></button>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Carousel Items -->
+            <div class="carousel-inner">
+                <?php foreach ($carouselImages as $index => $image): ?>
+                <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
+                    <!-- Tambahkan link agar gambar bisa diklik -->
+                    <a href="php/tiket-page.php?event_id=<?php echo $image['event_id']; ?>">
+                        <img src="<?php echo htmlspecialchars($image['event_image_path']); ?>" class="d-block w-100"
+                            alt="Event Image">
+                    </a>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#headerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#headerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+
         <!-- Event Pilihan Section -->
         <h3 class="fw-bold mb-4">Event Pilihan</h3>
         <div class="row g-4">
@@ -114,7 +163,8 @@ if ($isLoggedIn) {
             <?php foreach ($events as $event): ?>
             <div class="col-md-3">
                 <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>" class="card event-card">
-                    <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" class="card-img-top" alt="Event Image">
+                    <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" class="card-img-top"
+                        alt="Event Image">
                     <div class="card-body">
                         <h6 class="card-title fw-bold"><?php echo htmlspecialchars($event['title']); ?></h6>
                         <p class="card-text mb-1 text-muted">
@@ -141,8 +191,6 @@ if ($isLoggedIn) {
                 Lihat Semua Event
             </a>
         </div>
-    </div>
-
 
         <!-- Top Events Section -->
         <div class="container my-5 py-4" style="background-color: #0b2341; color: white; border-radius: 10px;">
@@ -238,7 +286,6 @@ if ($isLoggedIn) {
 
     eventContainer.innerHTML = newEvents;
 });
-
     </script>
 </body>
 
