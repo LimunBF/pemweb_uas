@@ -177,7 +177,7 @@ $ticketQuantities = array_column($topTicketsData, 'quantity');
         <div class="footer-bottom">
             <div class="container">
                 <div class="footer-links">
-                    <a href="php/tentang_kami.php">Tentang Kami</a>
+                    <a href="tentang_kami.php">Tentang Kami</a>
                     <span>•</span>
                     <a href="#">Blog</a>
                     <span>•</span>
