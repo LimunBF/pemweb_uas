@@ -25,12 +25,37 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'Profil Anda';
 
 // Ambil data riwayat tiket pengguna dari tabel purchase_history
-$stmt = $pdo->prepare("SELECT ph.*, e.title AS event_title, e.event_date, t.ticket_type 
-                       FROM purchase_history ph
-                       JOIN events e ON ph.event_id = e.event_id
-                       JOIN tickets t ON ph.ticket_id = t.ticket_id
-                       WHERE ph.user_id = :user_id 
-                       ORDER BY ph.purchase_date DESC");
+try {
+    $stmt = $pdo->prepare("
+        SELECT 
+            ph.purchase_id, 
+            ph.purchase_date, 
+            ph.quantity, 
+            ph.total_price, 
+            e.title AS event_title, 
+            e.event_date, 
+            e.event_image_path, 
+            t.ticket_type, 
+            o.payment_status 
+        FROM 
+            purchase_history ph
+        JOIN 
+            events e ON ph.event_id = e.event_id
+        JOIN 
+            tickets t ON ph.ticket_id = t.ticket_id
+        JOIN 
+            orders o ON ph.order_id = o.order_id
+        WHERE 
+            ph.user_id = :user_id 
+        ORDER BY 
+            ph.purchase_date DESC
+    ");
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error: Tidak dapat mengambil data riwayat pembelian tiket. " . $e->getMessage());
+}
 
 $stmt->bindParam(':user_id', $user_id);
 $stmt->execute();
@@ -69,6 +94,40 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
         padding: 15px 100px;
         margin-right: 15px;
         /* Pastikan jarak konsisten */
+    }
+
+    /*dadadaa*/
+    .card {
+        border: 1px solid #e6e6e6;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .card img {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .card .badge {
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .card-text {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .card .btn {
+        font-size: 14px;
+        padding: 8px 20px;
     }
     </style>
 </head>
@@ -138,14 +197,49 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php else : ?>
                     <?php foreach ($purchases as $purchase) : ?>
                     <?php if (strtotime($purchase['event_date']) > time()) : ?>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <?php echo htmlspecialchars($purchase['event_title']); ?>
-                            </h5>
-                            <p class="card-text">
-                                <strong>Tanggal:</strong> <?php echo htmlspecialchars($purchase['event_date']); ?>
-                            </p>
+                    <div class="card mb-4">
+                        <div class="row g-0">
+                            <!-- Gambar Event -->
+                            <div class="col-md-4">
+                                <?php
+                            // Adjust relative path to image folder
+                            $imagePath = '../' . $purchase['event_image_path'];
+                            ?>
+                                <img src="<?php echo htmlspecialchars($imagePath ?: '../img/default-image.jpg'); ?>"
+                                    class="img-fluid rounded-start"
+                                    alt="<?php echo htmlspecialchars($purchase['event_title']); ?>">
+                            </div>
+                            <!-- Detail Event -->
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <!-- Status Pembayaran -->
+                                    <?php if ($purchase['payment_status'] === 'completed') : ?>
+                                    <span class="badge bg-success">Pembayaran Berhasil</span>
+                                    <?php elseif ($purchase['payment_status'] === 'pending') : ?>
+                                    <span class="badge bg-warning">Menunggu Pembayaran</span>
+                                    <?php else : ?>
+                                    <span class="badge bg-danger">Pembayaran Gagal</span>
+                                    <?php endif; ?>
+
+                                    <h5 class="card-title mt-3">
+                                        <?php echo htmlspecialchars($purchase['event_title']); ?></h5>
+                                    <p class="card-text">
+                                        <i class="bi bi-calendar"></i>
+                                        <?php echo htmlspecialchars($purchase['event_date']); ?><br>
+                                        <i class="bi bi-ticket"></i>
+                                        <?php echo htmlspecialchars($purchase['quantity']); ?> Tiket
+                                        (<?php echo htmlspecialchars($purchase['ticket_type']); ?>)
+                                    </p>
+                                    <p class="card-text">
+                                        Total Harga: Rp
+                                        <?php echo number_format($purchase['total_price'], 2, ',', '.'); ?>
+                                    </p>
+                                    <p class="card-text text-muted">
+                                        Pembelian pada
+                                        <?php echo htmlspecialchars(date('d M Y, H:i', strtotime($purchase['purchase_date']))); ?>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -160,23 +254,60 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php else : ?>
                     <?php foreach ($purchases as $purchase) : ?>
                     <?php if (strtotime($purchase['event_date']) <= time()) : ?>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <?php echo htmlspecialchars($purchase['event_title']); ?>
-                            </h5>
-                            <p class="card-text">
-                                <strong>Tanggal:</strong> <?php echo htmlspecialchars($purchase['event_date']); ?>
-                            </p>
+                    <div class="card mb-4">
+                        <div class="row g-0">
+                            <!-- Gambar Event -->
+                            <div class="col-md-4">
+                                <?php
+                            // Adjust relative path to image folder
+                            $imagePath = '../' . $purchase['event_image_path'];
+                            ?>
+                                <img src="<?php echo htmlspecialchars($imagePath ?: '../img/default-image.jpg'); ?>"
+                                    class="img-fluid rounded-start"
+                                    alt="<?php echo htmlspecialchars($purchase['event_title']); ?>">
+                            </div>
+                            <!-- Detail Event -->
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <!-- Status Pembayaran -->
+                                    <?php if ($purchase['payment_status'] === 'completed') : ?>
+                                    <span class="badge bg-success">Pembayaran Berhasil</span>
+                                    <?php elseif ($purchase['payment_status'] === 'pending') : ?>
+                                    <span class="badge bg-warning">Menunggu Pembayaran</span>
+                                    <?php else : ?>
+                                    <span class="badge bg-danger">Pembayaran Gagal</span>
+                                    <?php endif; ?>
+
+                                    <h5 class="card-title mt-3">
+                                        <?php echo htmlspecialchars($purchase['event_title']); ?></h5>
+                                    <p class="card-text">
+                                        <i class="bi bi-calendar"></i>
+                                        <?php echo htmlspecialchars($purchase['event_date']); ?><br>
+                                        <i class="bi bi-ticket"></i>
+                                        <?php echo htmlspecialchars($purchase['quantity']); ?> Tiket
+                                        (<?php echo htmlspecialchars($purchase['ticket_type']); ?>)
+                                    </p>
+                                    <p class="card-text">
+                                        Total Harga: Rp
+                                        <?php echo number_format($purchase['total_price'], 2, ',', '.'); ?>
+                                    </p>
+                                    <p class="card-text text-muted">
+                                        Pembelian pada
+                                        <?php echo htmlspecialchars(date('d M Y, H:i', strtotime($purchase['purchase_date']))); ?>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <?php endif; ?>
                     <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
+
             </div>
         </div>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../javascript/profile.js"></script>
