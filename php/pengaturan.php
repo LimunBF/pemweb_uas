@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
                 <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile">
                 <span><?php echo $dropdownName; ?></span>
                 <div class="dropdown-menu">
-                    <a href="../index.php">Jelajah <i class="bi bi-chevron-right"></i></a>
+                    <a href="../Jelajah.php">Jelajah <i class="bi bi-chevron-right"></i></a>
                     <a href="#">Tiket Saya <i class="bi bi-chevron-right"></i></a>
                     <a href="profile.php">Informasi Dasar <i class="bi bi-chevron-right"></i></a>
                     <a href="pengaturan.php">Pengaturan <i class="bi bi-chevron-right"></i></a>
@@ -87,10 +87,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo">
-            <i class="bi bi-house"></i><span>LOKÉT</span>
-        </div>
-        <a href="../index.php" class="<?php echo $current_page == 'index.php' ? 'active' : ''; ?>">
+        <a href="../index.php" class="logo">
+            <i class="bi bi-house"></i><span>BÉLI TIKÉT</span>
+        </a>
+        <a href="../Jelajah.php" class="<?php echo $current_page == 'index.php' ? 'active' : ''; ?>">
             <i class="bi bi-house"></i><span>Jelajah Event</span>
         </a>
         <a href="#" class="<?php echo $current_page == 'tickets.php' ? 'active' : ''; ?>">
