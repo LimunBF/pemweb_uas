@@ -1,7 +1,7 @@
 # Sistem Informasi UAS
 
 ## Deskripsi Proyek
-Proyek ini adalah sistem informasi yang dirancang untuk memenuhi syarat UAS dengan tema [unknown]. Proyek ini mencakup berbagai fitur yang diperlukan seperti koneksi database, CRUD, autentikasi pengguna, dan banyak lagi.
+Proyek ini adalah sistem informasi yang dirancang untuk memenuhi syarat UAS dengan tema **Pemesanan Tiket**. Proyek ini mencakup berbagai fitur yang diperlukan seperti koneksi database, CRUD, autentikasi pengguna, dan banyak lagi.
 
 ## Fitur Utama
 - **Koneksi ke Database**: Sistem terhubung ke database untuk menyimpan dan mengambil data.
