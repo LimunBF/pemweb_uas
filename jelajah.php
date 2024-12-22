@@ -135,77 +135,66 @@
 </head>
 <body>
 <?php
-    session_start();
-    $isLoggedIn = isset($_SESSION['user_id']); 
-    
-    try {
-        $pdo = new PDO("mysql:host=localhost;dbname=loket_com", "root", "");
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        // Ambil nama pengguna jika sudah login
-        if ($isLoggedIn) {
-            $userId = $_SESSION['user_id'];
-            $stmtUser = $pdo->prepare("SELECT name FROM users WHERE user_id = :user_id LIMIT 1");
-            $stmtUser->execute(['user_id' => $userId]);
-            $user = $stmtUser->fetch();
-            $userName = $user ? htmlspecialchars($user['name']) : 'Pengguna';
-        } else {
-            $userName = null;
-        }
-        
-        // Get parameters
-        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'date_asc';
-        $location = isset($_GET['location']) ? $_GET['location'] : '';
-        $month = isset($_GET['month']) ? $_GET['month'] : '';
-        
-        // Base query
-        $baseQuery = "SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events";
-        
-        // Add WHERE conditions
-        $whereConditions = [];
-        $params = [];
-        
-        if ($location) {
-            $whereConditions[] = "location = :location";
-            $params[':location'] = $location;
-        }
-        
-        if ($month) {
-            $whereConditions[] = "DATE_FORMAT(event_date, '%Y-%m') = :month";
-            $params[':month'] = $month;
-        }
-        
-        if (!empty($whereConditions)) {
-            $baseQuery .= " WHERE " . implode(" AND ", $whereConditions);
-        }
-        
-        // Add ORDER BY clause
-        switch($sort) {
-            case 'title_asc':
-                $baseQuery .= " ORDER BY title ASC";
-                break;
-            case 'title_desc':
-                $baseQuery .= " ORDER BY title DESC";
-                break;
-            case 'date_desc':
-                $baseQuery .= " ORDER BY event_date DESC";
-                break;
-            default: // date_asc
-                $baseQuery .= " ORDER BY event_date ASC";
-        }
-        
-        $stmt = $pdo->prepare($baseQuery);
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value);
-        }
-        $stmt->execute();
-        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch(PDOException $e) {
-        echo "Error: " . $e->getMessage();
-        $events = [];
-        $userName = 'Pengguna';
+session_start();
+$isLoggedIn = isset($_SESSION['user_id']); 
+
+try {
+    $pdo = new PDO("mysql:host=localhost;dbname=loket_com", "root", "");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Ambil nama pengguna jika sudah login
+    if ($isLoggedIn) {
+        $userId = $_SESSION['user_id'];
+        $stmtUser = $pdo->prepare("SELECT name FROM users WHERE user_id = :user_id LIMIT 1");
+        $stmtUser->execute(['user_id' => $userId]);
+        $user = $stmtUser->fetch();
+        $userName = $user ? htmlspecialchars($user['name']) : 'Pengguna';
+    } else {
+        $userName = null;
     }
+
+    // Get search parameter
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    $sort = isset($_GET['sort']) ? $_GET['sort'] : 'date_asc';
+
+    // Base query
+    $query = "SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events";
+    $params = [];
+
+    // Add search condition
+    if (!empty($search)) {
+        $query .= " WHERE title LIKE :search";
+        $params[':search'] = "%$search%";
+    }
+
+    // Add ORDER BY clause
+    switch ($sort) {
+        case 'title_asc':
+            $query .= " ORDER BY title ASC";
+            break;
+        case 'title_desc':
+            $query .= " ORDER BY title DESC";
+            break;
+        case 'date_desc':
+            $query .= " ORDER BY event_date DESC";
+            break;
+        default: // date_asc
+            $query .= " ORDER BY event_date ASC";
+    }
+
+    $stmt = $pdo->prepare($query);
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+    $stmt->execute();
+    $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+    $events = [];
+    $userName = 'Pengguna';
+}
 ?>
+
 
 <!-- Navbar -->
 <header>
@@ -215,14 +204,14 @@
             <a class="navbar-brand fw-bold" href="#">BÉLI TIKÉT</a>
             <!-- Search Bar -->
             <div class="mx-auto" style="width: 40%;">
-                <div class="input-group">
-                    <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
-                        id="searchInput" aria-label="Search">
-                    <button class="btn btn-primary" type="button">
-                        <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
-                    </button>
-                </div>
-            </div>
+    <div class="input-group">
+        <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
+               id="searchInput" aria-label="Search">
+        <button class="btn btn-primary" type="button">
+            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
+        </button>
+    </div>
+</div>
 
             <!-- Menu Kanan -->
             <div class="d-flex align-items-center gap-3">
@@ -470,5 +459,23 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="javascript/navbar.js"></script>
 <script src="javascript/jelajah.js"></script>
+<script>
+    document.getElementById('searchInput').addEventListener('input', async (e) => {
+    const searchQuery = e.target.value.trim();
+
+    // Kirim permintaan ke server untuk pencarian
+    const response = await fetch(`?search=${encodeURIComponent(searchQuery)}`);
+    const html = await response.text();
+
+    // Ambil elemen yang memuat daftar event dan perbarui kontennya
+    const eventContainer = document.querySelector('.row.row-cols-1.row-cols-md-4.g-4');
+    const parser = new DOMParser();
+    const newDoc = parser.parseFromString(html, 'text/html');
+    const newEvents = newDoc.querySelector('.row.row-cols-1.row-cols-md-4.g-4').innerHTML;
+
+    eventContainer.innerHTML = newEvents;
+});
+
+</script>
 </body>
 </html> 
