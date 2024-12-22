@@ -388,7 +388,7 @@
                 <?php if (!empty($events)): ?>
                     <?php foreach ($events as $event) : ?>
                         <div class="col">
-                            <a href="tiket-page.php?event_id=<?php echo $event['event_id']; ?>" class="card event-card">
+                            <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>" class="card event-card">
                                 <img src="<?= htmlspecialchars($event['event_image_path']) ?>" 
                                      class="card-img-top" 
                                      alt="<?= htmlspecialchars($event['title']) ?>">

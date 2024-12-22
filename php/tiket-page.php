@@ -13,6 +13,17 @@ try {
     // Mendapatkan koneksi database
     $pdo = getDatabaseConnection();
 
+    // Ambil nama pengguna jika sudah login
+    if ($isLoggedIn) {
+        $userId = $_SESSION['user_id'];
+        $stmtUser = $pdo->prepare("SELECT name FROM users WHERE user_id = :user_id LIMIT 1");
+        $stmtUser->execute(['user_id' => $userId]);
+        $user = $stmtUser->fetch();
+        $userName = $user ? htmlspecialchars($user['name']) : 'Pengguna';
+    } else {
+        $userName = null;
+    }
+
     // Ambil event_id dari URL
     $event_id = isset($_GET['event_id']) ? $_GET['event_id'] : null;
 
@@ -42,6 +53,7 @@ try {
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../css/navbar_footer.css">
@@ -52,59 +64,54 @@ try {
 
 <!-- HEADER DAN NAVIGASI -->
 <header>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container-fluid">
-                <!-- Logo -->
-                <a class="navbar-brand fw-bold" href="#">LOKÉT</a>
-                <!-- Search Bar -->
-                <div class="mx-auto" style="width: 40%;">
-                    <div class="input-group">
-                        <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
-                            id="searchInput" aria-label="Search">
-                        <button class="btn btn-primary" type="button">
-                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Menu Kanan -->
-                <div class="d-flex align-items-center">
-                    <!-- Buat Event -->
-                    <a href="#" class="icon-link me-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="Buat Event">
-                        Buat Event
-                    </a>
-
-                    <!-- Jelajah -->
-                    <a href="jelajah.php" class="icon-link me-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
-                        Jelajah
-                    </a>
-
-                    <?php if (!$isLoggedIn): ?>
-                        <!-- Daftar dan Masuk -->
-                        <a href="php/register.php" class="btn btn-outline-light me-2">Daftar</a>
-                        <a href="php/login.php" class="btn btn-primary">Masuk</a>
-                    <?php else: ?>
-                        <!-- Profile Dropdown -->
-                        <div class="dropdown">
-                            <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <li class="dropdown-header">Profil Anda</li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
-                                <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
-                                <li><a class="dropdown-item" href="#">Pengaturan</a></li>
-                                <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
-                            </ul>
-                        </div>
-                    <?php endif; ?>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="../index.php">BÉLI TIKÉT</a>
+            <!-- Search Bar -->
+            <div class="mx-auto" style="width: 40%;">
+                <div class="input-group">
+                    <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
+                        id="searchInput" aria-label="Search">
+                    <button class="btn btn-primary" type="button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
+                    </button>
                 </div>
             </div>
-        </nav>
+
+            <!-- Menu Kanan -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- Jelajah -->
+                <a href="../jelajah.php" class="btn btn-outline-light d-flex align-items-center gap-2 px-3">
+                    <i class="bi bi-compass"></i>
+                    <span>Jelajah</span>
+                </a>
+
+                <?php if (!$isLoggedIn): ?>
+                    <!-- Daftar dan Masuk -->
+                    <a href="register.php" class="btn btn-outline-light px-3">Daftar</a>
+                    <a href="login.php" class="btn btn-primary px-3">Masuk</a>
+                <?php else: ?>
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-light d-flex align-items-center gap-2 px-3" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fas fa-circle-user fa-lg"></i>
+                            <span><?php echo $userName ? htmlspecialchars($userName) : 'Profil'; ?></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-header">Halo, <?php echo $userName ? htmlspecialchars($userName) : 'Pengguna'; ?></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="riwayat.php">Tiket Saya</a></li>
+                            <li><a class="dropdown-item" href="profile.php">Informasi Dasar</a></li>
+                            <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                            <li><a class="dropdown-item text-danger" href="logout.php">Keluar</a></li>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </nav>
 </header>
 
 <!-- MAIN CONTENT -->
