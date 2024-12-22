@@ -64,6 +64,44 @@ try {
     echo json_encode(['success' => false, 'message' => 'Gagal menyimpan order: ' . $e->getMessage()]);
 }
 
+//Insert data ke tabel purchase_history
+// Menambahkan data ke tabel purchase_history
+foreach ($data['tickets'] as $ticket) {
+    $ticket_id = $ticket['ticket_id'];
+    $quantity = $ticket['quantity'];
+
+    // Ambil event_id berdasarkan ticket_id
+    $sql = "SELECT event_id, price FROM tickets WHERE ticket_id = :ticket_id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['ticket_id' => $ticket_id]);
+    $ticket_data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($ticket_data) {
+        $event_id = $ticket_data['event_id'];
+        $price = $ticket_data['price'];
+        $total_price = $price * $quantity;
+
+        // Insert ke tabel purchase_history
+        $sql = "INSERT INTO purchase_history (user_id, order_id, event_id, ticket_id, purchase_date, quantity, total_price)
+                VALUES (:user_id, :order_id, :event_id, :ticket_id, NOW(), :quantity, :total_price)";
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                'user_id' => $user_id,
+                'order_id' => $order_id,
+                'event_id' => $event_id,
+                'ticket_id' => $ticket_id,
+                'quantity' => $quantity,
+                'total_price' => $total_price,
+            ]);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Gagal menyimpan riwayat pembelian: ' . $e->getMessage()]);
+            exit; // Hentikan eksekusi jika ada error
+        }
+    }
+}
+
+
 // Beri response bahwa data telah berhasil disimpan
 //echo json_encode(['success' => true, 'order_id' => $order_id]);
 ?>
