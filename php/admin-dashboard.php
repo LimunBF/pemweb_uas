@@ -70,6 +70,12 @@ if ($conn->connect_error) {
             <div style="color: white;" class="d-flex align-items-center">
             </div>
         </div>
+        <div class="d-flex align-items-center gap-3" href="#">
+                <!-- Jelajah -->
+                <a class="navbar-brand">
+                    <span>Admin</span>
+                </a>
+            </div>
     </nav>
     </header>
 
@@ -254,34 +260,40 @@ if ($conn->connect_error) {
         });
         document.addEventListener("DOMContentLoaded", function () {
             // Dummy data untuk Tiket Terlaris
-            const ticketLabels = ['Tiket A', 'Tiket B', 'Tiket C', 'Tiket D', 'Tiket E'];
-            const ticketData = [120, 80, 150, 90, 60]; // Data dummy, ganti dengan data dari database
+            fetch('get_top_tickets.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        const ticketLabels = data.map(item => item.ticket_name);
+                        const ticketData = data.map(item => item.total_sold);
 
-            const ctxTopTickets = document.getElementById('topTicketsChart').getContext('2d');
-            const topTicketsChart = new Chart(ctxTopTickets, {
-                type: 'bar',
-                data: {
-                    labels: ticketLabels,
-                    datasets: [{
-                        label: 'Tiket Terjual',
-                        data: ticketData,
-                        backgroundColor: ['#0b2341', '#0b2341', '#0b2341', '#0b2341', '#0b2341'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
+                        const ctxTopTickets = document.getElementById('topTicketsChart').getContext('2d');
+                        const topTicketsChart = new Chart(ctxTopTickets, {
+                            type: 'bar',
+                            data: {
+                                labels: ticketLabels,
+                                datasets: [{
+                                    label: 'Tiket Terjual',
+                                    data: ticketData,
+                                    backgroundColor: ['#0b2341', '#2f80ed', '#1e3c72', '#1e3c72', '#2f80ed'],
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'top',
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
             });
 
             // Dummy data untuk Penjualan Bulanan
