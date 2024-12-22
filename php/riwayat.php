@@ -30,12 +30,12 @@ try {
         SELECT 
             ph.purchase_id, 
             ph.purchase_date, 
-            ph.quantity, 
-            ph.total_price, 
+            SUM(ph.quantity) AS total_quantity, 
+            SUM(ph.total_price) AS total_price, 
+            GROUP_CONCAT(CONCAT(ph.quantity, ' Tiket (', t.ticket_type, ')') SEPARATOR ', ') AS ticket_details, 
             e.title AS event_title, 
             e.event_date, 
             e.event_image_path, 
-            t.ticket_type, 
             o.payment_status 
         FROM 
             purchase_history ph
@@ -47,6 +47,8 @@ try {
             orders o ON ph.order_id = o.order_id
         WHERE 
             ph.user_id = :user_id 
+        GROUP BY 
+            ph.event_id, ph.purchase_date
         ORDER BY 
             ph.purchase_date DESC
     ");
@@ -174,7 +176,6 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </button>
     </div>
 
-
     <!-- Konten Utama -->
     <div class="content-container">
         <h2 class="content-header">Profil Kamu</h2>
@@ -202,7 +203,6 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <!-- Gambar Event -->
                             <div class="col-md-4">
                                 <?php
-                            // Adjust relative path to image folder
                             $imagePath = '../' . $purchase['event_image_path'];
                             ?>
                                 <img src="<?php echo htmlspecialchars($imagePath ?: '../img/default-image.jpg'); ?>"
@@ -227,8 +227,7 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <i class="bi bi-calendar"></i>
                                         <?php echo htmlspecialchars($purchase['event_date']); ?><br>
                                         <i class="bi bi-ticket"></i>
-                                        <?php echo htmlspecialchars($purchase['quantity']); ?> Tiket
-                                        (<?php echo htmlspecialchars($purchase['ticket_type']); ?>)
+                                        <?php echo htmlspecialchars($purchase['ticket_details']); ?>
                                     </p>
                                     <p class="card-text">
                                         Total Harga: Rp
@@ -259,7 +258,6 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <!-- Gambar Event -->
                             <div class="col-md-4">
                                 <?php
-                            // Adjust relative path to image folder
                             $imagePath = '../' . $purchase['event_image_path'];
                             ?>
                                 <img src="<?php echo htmlspecialchars($imagePath ?: '../img/default-image.jpg'); ?>"
@@ -284,8 +282,7 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <i class="bi bi-calendar"></i>
                                         <?php echo htmlspecialchars($purchase['event_date']); ?><br>
                                         <i class="bi bi-ticket"></i>
-                                        <?php echo htmlspecialchars($purchase['quantity']); ?> Tiket
-                                        (<?php echo htmlspecialchars($purchase['ticket_type']); ?>)
+                                        <?php echo htmlspecialchars($purchase['ticket_details']); ?>
                                     </p>
                                     <p class="card-text">
                                         Total Harga: Rp
@@ -304,10 +301,10 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php endif; ?>
                 </div>
 
+
             </div>
         </div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../javascript/profile.js"></script>
