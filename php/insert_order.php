@@ -65,17 +65,22 @@ try {
 }
 
 //Insert data ke tabel purchase_history
-// Menambahkan data ke tabel purchase_history
 foreach ($data['tickets'] as $ticket) {
     $ticket_id = $ticket['ticket_id'];
     $quantity = $ticket['quantity'];
 
-    // Ambil event_id berdasarkan ticket_id
+    // Pastikan jumlah tiket lebih dari 0
+    if ($quantity <= 0) {
+        continue; // Lewati iterasi jika quantity tidak valid
+    }
+
+    // Ambil event_id dan harga tiket berdasarkan ticket_id
     $sql = "SELECT event_id, price FROM tickets WHERE ticket_id = :ticket_id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['ticket_id' => $ticket_id]);
     $ticket_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // Pastikan data tiket ditemukan
     if ($ticket_data) {
         $event_id = $ticket_data['event_id'];
         $price = $ticket_data['price'];
@@ -98,9 +103,11 @@ foreach ($data['tickets'] as $ticket) {
             echo json_encode(['success' => false, 'message' => 'Gagal menyimpan riwayat pembelian: ' . $e->getMessage()]);
             exit; // Hentikan eksekusi jika ada error
         }
+    } else {
+        // Jika data tiket tidak ditemukan, lewati iterasi
+        continue;
     }
 }
-
 
 // Beri response bahwa data telah berhasil disimpan
 //echo json_encode(['success' => true, 'order_id' => $order_id]);
