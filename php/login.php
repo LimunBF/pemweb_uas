@@ -15,13 +15,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Periksa apakah pengguna ada
         if ($stmt->rowCount() > 0) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            // Verifikasi password
+            
+            $passwordCorrect = false;
+
+            // Verifikasi password (hash atau plaintext)
             if (password_verify($_POST['password'], $user['password'])) {
+                $passwordCorrect = true; // Password cocok dengan hash
+            } elseif ($_POST['password'] === $user['password']) {
+                $passwordCorrect = true; // Password cocok dengan plaintext
+
+                // Perbarui password plaintext ke hash
+                $newHashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                $updateStmt = $pdo->prepare("UPDATE users SET password = :password WHERE email = :email");
+                $updateStmt->bindParam(':password', $newHashedPassword);
+                $updateStmt->bindParam(':email', $user['email']);
+                $updateStmt->execute();
+            }
+
+            // Jika password benar
+            if ($passwordCorrect) {
                 // Set session
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['role'] = $user['role'];
-                
+
+                // Arahkan berdasarkan role
                 if ($user['role'] === 'admin') {
                     header("Location: admin-dashboard.php");
                 } else {
@@ -34,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $error = "Email atau kata sandi salah.";
         }
-    } catch(PDOException $e) {
+    } catch (PDOException $e) {
         echo "Koneksi gagal: " . $e->getMessage();
     }
 }
