@@ -86,15 +86,15 @@ try {
                     </a>
 
                     <!-- Jelajah -->
-                    <a href="#" class="icon-link me-3">
+                    <a href="jelajah.php" class="icon-link me-3">
                         <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
                         Jelajah
                     </a>
 
                     <?php if (!$isLoggedIn): ?>
                         <!-- Daftar dan Masuk -->
-                        <a href="../php/register.php" class="btn btn-outline-light me-2">Daftar</a>
-                        <a href="../php/login.php" class="btn btn-primary">Masuk</a>
+                        <a href="php/register.php" class="btn btn-outline-light me-2">Daftar</a>
+                        <a href="php/login.php" class="btn btn-primary">Masuk</a>
                     <?php else: ?>
                         <!-- Profile Dropdown -->
                         <div class="dropdown">
@@ -105,7 +105,7 @@ try {
                                 <li class="dropdown-header">Profil Anda</li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
-                                <li><a class="dropdown-item" href="#">Informasi Dasar</a></li>
+                                <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
                                 <li><a class="dropdown-item" href="#">Pengaturan</a></li>
                                 <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
                             </ul>
@@ -114,7 +114,7 @@ try {
                 </div>
             </div>
         </nav>
-</header>
+    </header>
 
 <!-- MAIN CONTENT -->
 <main class="container my-4 flex-grow-1">
@@ -220,38 +220,47 @@ try {
 <!-- FOOTER -->
 <footer>
         <div class="footer">
-            <!-- Keamanan dan Privasi -->
-            <h5 class="text-white mb-3">Keamanan dan Privasi</h5>
-            <img src="assets/images/logo_bsi.png" alt="Logo BSI" class="mb-4">
+            <div class="container">
+                <div class="row">
+                   
+                <!-- Keamanan dan Privasi -->
+                <div class="security-section text-center mt-4">
+                    <h5>Keamanan dan Privasi</h5>
+                    <img src="../assets/images/logo_bsi.png" alt="Logo BSI" class="mt-2 mb-4">
+                </div>
 
-            <!-- Social Media Icons -->
-            <div class="footer-icons">
-                <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
-                <a href="#" target="_blank"><i class="bi bi-tiktok"></i></a>
-                <a href="#" target="_blank"><i class="bi bi-x"></i></a>
-                <a href="#" target="_blank"><i class="bi bi-linkedin"></i></a>
-                <a href="#" target="_blank"><i class="bi bi-youtube"></i></a>
-                <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
+                <!-- Social Media Icons -->
+                <div class="social-media-section text-center">
+                    <h5>Ikuti Kami</h5>
+                    <div class="social-icons mt-3">
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-tiktok"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Footer Bottom Section -->
+        <!-- Footer Bottom -->
         <div class="footer-bottom">
             <div class="container">
-                <div div class="d-inline-flex flex-wrap justify-content-center align-items-center" style="gap: 10px;">
-                    <a href="php/our-team.php" style="text-decoration: none; color: #d1d9e6;">Tentang Kami</a>
+                <div class="footer-links">
+                    <a href="php/tentang_kami.php">Tentang Kami</a>
                     <span>•</span>
-                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Blog</a>
+                    <a href="#">Blog</a>
                     <span>•</span>
-                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Kebijakan Privasi</a>
+                    <a href="#">Kebijakan Privasi</a>
                     <span>•</span>
-                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Kebijakan Cookie</a>
+                    <a href="#">Kebijakan Cookie</a>
                     <span>•</span>
-                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Panduan</a>
+                    <a href="#">Panduan</a>
                     <span>•</span>
-                    <a href="#" style="text-decoration: none; color: #d1d9e6;">Hubungi Kami</a>
+                    <a href="#">Hubungi Kami</a>
                 </div>
-                <p class="mb-0 mt-2">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
+                <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
             </div>
         </div>
 </footer>
