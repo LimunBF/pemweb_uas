@@ -31,6 +31,11 @@ if ($isLoggedIn) {
 } else {
     $userName = null;
 }
+
+// Query untuk mengambil 3 event dengan gambar secara acak
+$stmtTopEvents = $pdo->prepare("SELECT event_id, event_image_path FROM events WHERE event_image_path IS NOT NULL ORDER BY RAND() LIMIT 3");
+$stmtTopEvents->execute();
+$topEvents = $stmtTopEvents->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +96,7 @@ if ($isLoggedIn) {
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="php/riwayat.php">Tiket Saya</a></li>
                             <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
-                            <li><a class="dropdown-item" href="#">Pengaturan</a></li>
+                            <li><a class="dropdown-item" href="php/pengaturan.php">Pengaturan</a></li>
                             <li><a class="dropdown-item text-danger" href="php/logout.php">Keluar</a></li>
                         </ul>
                     </div>
@@ -188,29 +193,25 @@ if ($isLoggedIn) {
         <div class="container my-5 py-4" style="background-color: #0b2341; color: white; border-radius: 10px;">
             <h3 class="fw-bold text-center mb-4">Top Events!</h3>
             <div class="d-flex justify-content-around align-items-center">
-                <!-- Event 1 -->
-                <div class="position-relative text-center">
-                    <h1 class="display-1 fw-bold text-white position-absolute top-50 start-50 translate-middle"
-                        style="opacity: 0.2; z-index: 0;">1</h1>
-                    <img src="assets/images/event1.png" alt="Event 1" class="position-relative rounded-3"
-                        style="width: 250px; height: 150px; object-fit: cover; z-index: 1;">
-                </div>
-
-                <!-- Event 2 -->
-                <div class="position-relative text-center">
-                    <h1 class="display-1 fw-bold text-white position-absolute top-50 start-50 translate-middle"
-                        style="opacity: 0.2; z-index: 0;">2</h1>
-                    <img src="assets/images/event2.png" alt="Event 2" class="position-relative rounded-3"
-                        style="width: 250px; height: 150px; object-fit: cover; z-index: 1;">
-                </div>
-
-                <!-- Event 3 -->
-                <div class="position-relative text-center">
-                    <h1 class="display-1 fw-bold text-white position-absolute top-50 start-50 translate-middle"
-                        style="opacity: 0.2; z-index: 0;">3</h1>
-                    <img src="assets/images/event3.png" alt="Event 3" class="position-relative rounded-3"
-                        style="width: 250px; height: 150px; object-fit: cover; z-index: 1;">
-                </div>
+                <?php foreach ($topEvents as $index => $event): ?>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Angka -->
+                        <div class="text-center">
+                            <h1 class="display-1 fw-bold text-white" style="opacity: 0.9;">
+                                <?php echo $index + 1; ?>
+                            </h1>
+                        </div>
+                        <!-- Gambar -->
+                        <div class="position-relative text-center" style="width: 300px;">
+                            <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>">
+                                <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" 
+                                    alt="Event <?php echo $index + 1; ?>" 
+                                    class="position-relative rounded-3"
+                                    style="width: 100%; height: auto; object-fit: contain; z-index: 1; border: 2px solid white;">
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
