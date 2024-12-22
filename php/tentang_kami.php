@@ -1,6 +1,33 @@
 <?php
-    session_start();
-    $isLoggedIn = isset($_SESSION['user_id']);
+session_start(); 
+$isLoggedIn = isset($_SESSION['user_id']); 
+
+// Include the database connection file
+include_once '../connection/connect.php';
+
+// Get the database connection
+$pdo = getDatabaseConnection();
+
+// Query untuk mengambil events
+$stmt = $pdo->prepare("SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events LIMIT 10");
+$stmt->execute();
+$events = $stmt->fetchAll();
+
+// Periksa apakah pengguna sudah login
+if ($isLoggedIn) {
+    // Ambil user_id dari session
+    $userId = $_SESSION['user_id'];
+
+    // Query untuk mengambil nama pengguna berdasarkan user_id
+    $stmtUser = $pdo->prepare("SELECT name FROM users WHERE user_id = :user_id LIMIT 1");
+    $stmtUser->execute(['user_id' => $userId]);
+    $user = $stmtUser->fetch();
+
+    // Pastikan nama pengguna ditemukan
+    $userName = $user ? htmlspecialchars($user['name']) : 'Pengguna';
+} else {
+    $userName = null;
+}
 ?>
 
 <!DOCTYPE html>
@@ -14,6 +41,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../css/navbar_footer.css">
+    <link rel="stylesheet" type="text/css" href="../css/tentang_kami.css">
 </head>
 
 <body>
@@ -35,16 +63,35 @@
             </div>
 
             <!-- Menu Kanan -->
-            <div class="d-flex align-items-center justify-content-end">
+            <div class="d-flex align-items-center gap-3">
                 <!-- Jelajah -->
-                <a href="../jelajah.php" class="icon-link me-3 d-flex align-items-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah" class="me-1">
-                    Jelajah
+                <a href="../jelajah.php" class="btn btn-outline-light d-flex align-items-center gap-2 px-3">
+                    <i class="bi bi-compass"></i>
+                    <span>Jelajah</span>
                 </a>
 
+                <?php if (!$isLoggedIn): ?>
                 <!-- Daftar dan Masuk -->
-                <a href="register.php" class="btn btn-outline-light me-2">Daftar</a>
-                <a href="login.php" class="btn btn-primary">Masuk</a>
+                <a href="register.php" class="btn btn-outline-light px-3">Daftar</a>
+                <a href="login.php" class="btn btn-primary px-3">Masuk</a>
+                <?php else: ?>
+                <!-- Profile Dropdown -->
+                <div class="dropdown">
+                    <a href="#" class="btn btn-light d-flex align-items-center gap-2 px-3" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="fas fa-user-circle fa-lg"></i>
+                        <span><?php echo $userName ? htmlspecialchars($userName) : 'Profil'; ?></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                        <li class="dropdown-header">Halo, <?php echo $userName ? htmlspecialchars($userName) : 'Pengguna'; ?></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
+                        <li><a class="dropdown-item" href="profile.php">Informasi Dasar</a></li>
+                        <li><a class="dropdown-item" href="pengaturan.php">Pengaturan</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">Keluar</a></li>
+                    </ul>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </nav>

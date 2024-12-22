@@ -64,31 +64,28 @@ if ($isLoggedIn) {
                 </div>
 
                 <!-- Menu Kanan -->
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center gap-3">
                     <!-- Jelajah -->
-                    <a href="jelajah.php" class="icon-link me-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991114.png" alt="Jelajah">
-                        Jelajah
+                    <a href="jelajah.php" class="btn btn-outline-light d-flex align-items-center gap-2 px-3">
+                        <i class="bi bi-compass"></i>
+                        <span>Jelajah</span>
                     </a>
 
                     <?php if (!$isLoggedIn): ?>
                     <!-- Daftar dan Masuk -->
-                    <a href="php/register.php" class="btn btn-outline-light me-2">Daftar</a>
-                    <a href="php/login.php" class="btn btn-primary">Masuk</a>
+                    <a href="php/register.php" class="btn btn-outline-light px-3">Daftar</a>
+                    <a href="php/login.php" class="btn btn-primary px-3">Masuk</a>
                     <?php else: ?>
                     <!-- Profile Dropdown -->
                     <div class="dropdown">
-                        <a href="#" class="d-block" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                        <a href="#" class="btn btn-light d-flex align-items-center gap-2 px-3" id="dropdownMenuButton" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            <i class="fas fa-user-circle fa-2x text-white"></i> <!-- Profile Icon -->
+                            <i class="fas fa-user-circle fa-lg"></i>
+                            <span><?php echo $userName ? htmlspecialchars($userName) : 'Profil'; ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <li class="dropdown-header">
-                                <?php echo $userName ? "Halo, " . $userName : "Profil Anda"; ?>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                            <li class="dropdown-header">Halo, <?php echo $userName ? htmlspecialchars($userName) : 'Pengguna'; ?></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Tiket Saya</a></li>
                             <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
                             <li><a class="dropdown-item" href="#">Pengaturan</a></li>
@@ -97,6 +94,7 @@ if ($isLoggedIn) {
                     </div>
                     <?php endif; ?>
                 </div>
+
             </div>
         </nav>
     </header>
@@ -208,11 +206,10 @@ if ($isLoggedIn) {
     </div>
 
     <!-- Footer -->
-    <footer>
+    <footer>    
         <div class="footer">
             <div class="container">
                 <div class="row">
-
                     <!-- Keamanan dan Privasi -->
                     <div class="security-section text-center mt-4">
                         <h5>Keamanan dan Privasi</h5>
@@ -233,26 +230,27 @@ if ($isLoggedIn) {
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Footer Bottom -->
-            <div class="footer-bottom">
-                <div class="container">
-                    <div class="footer-links">
-                        <a href="php/tentang_kami.php">Tentang Kami</a>
-                        <span>•</span>
-                        <a href="#">Blog</a>
-                        <span>•</span>
-                        <a href="#">Kebijakan Privasi</a>
-                        <span>•</span>
-                        <a href="#">Kebijakan Cookie</a>
-                        <span>•</span>
-                        <a href="#">Panduan</a>
-                        <span>•</span>
-                        <a href="#">Hubungi Kami</a>
-                    </div>
-                    <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-links">
+                    <a href="php/tentang_kami.php">Tentang Kami</a>
+                    <span>•</span>
+                    <a href="#">Blog</a>
+                    <span>•</span>
+                    <a href="#">Kebijakan Privasi</a>
+                    <span>•</span>
+                    <a href="#">Kebijakan Cookie</a>
+                    <span>•</span>
+                    <a href="#">Panduan</a>
+                    <span>•</span>
+                    <a href="#">Hubungi Kami</a>
                 </div>
+                <p class="copyright">&copy; 2024 Loket (PT Global Loket Sejahtera)</p>
             </div>
+        </div>
     </footer>
 
     <!-- Bootstrap 5.3 JS Bundle -->

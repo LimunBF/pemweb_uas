@@ -111,7 +111,7 @@ body {
     align-items: center;
     cursor: pointer;
     position: relative;
-    transform: translateX(-10%); /* Moves it 10px to the left */
+    transform: translateX(-20%); /* Moves it 10px to the left */
 }
 
 .dropdown-profile:hover {
