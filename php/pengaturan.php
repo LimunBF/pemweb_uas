@@ -24,24 +24,26 @@ $dropdownName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'Profi
 $current_page = basename($_SERVER['PHP_SELF']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
-    // Hapus akun dari database
-    $deleteStmt = $pdo->prepare("DELETE FROM users WHERE user_id = :user_id");
-    $deleteStmt->bindParam(':user_id', $user_id);
-    if ($deleteStmt->execute()) {
-        // Logout dan redirect dengan delay ke halaman utama
+    try {
+        // Hapus akun pengguna
+        $deleteStmt = $pdo->prepare("DELETE FROM users WHERE user_id = :user_id");
+        $deleteStmt->bindParam(':user_id', $user_id);
+        $deleteStmt->execute();        
+        
+        // Logout dan redirect ke halaman utama
         session_destroy();
         echo "<script>
             alert('Akun berhasil dihapus. Anda akan dialihkan ke halaman utama.');
             setTimeout(() => {
                 window.location.href = '../index.php';
-            }, 2000);
-            
+            }, 2000)
         </script>";
         exit();
-    } else {
-        $error_message = "Gagal menghapus akun. Silakan coba lagi nanti.";
+    } catch (PDOException $e) {
+        $error_message = "Gagal menghapus akun. Silakan coba lagi nanti: " . $e->getMessage();
     }
 }
+
 ?>
 
 <!DOCTYPE html>
