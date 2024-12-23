@@ -8,20 +8,12 @@ include_once 'connection/connect.php';
 // Get the database connection
 $pdo = getDatabaseConnection();
 
-// Ambil parameter pencarian dari input (jika ada)
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-
-// Query untuk mengambil event berdasarkan pencarian judul
-$query = "SELECT event_id, title, event_date, location, organizer_name, event_image_path FROM events";
-if (!empty($search)) {
-    $query .= " WHERE title LIKE :search";
-}
-$query .= " ORDER BY event_date ASC LIMIT 8";
+// Query untuk mengambil event default (tidak terpengaruh pencarian)
+$query = "SELECT event_id, title, event_date, location, organizer_name, event_image_path 
+          FROM events 
+          ORDER BY event_date ASC LIMIT 8";
 
 $stmt = $pdo->prepare($query);
-if (!empty($search)) {
-    $stmt->bindValue(':search', "%$search%");
-}
 $stmt->execute();
 $events = $stmt->fetchAll();
 
@@ -35,8 +27,12 @@ if ($isLoggedIn) {
 } else {
     $userName = null;
 }
+
 // Query untuk mengambil 3 event dengan gambar secara acak
-$stmtTopEvents = $pdo->prepare("SELECT event_id, event_image_path FROM events WHERE event_image_path IS NOT NULL ORDER BY RAND() LIMIT 3");
+$stmtTopEvents = $pdo->prepare("SELECT event_id, event_image_path 
+                                FROM events 
+                                WHERE event_image_path IS NOT NULL 
+                                ORDER BY RAND() LIMIT 3");
 $stmtTopEvents->execute();
 $topEvents = $stmtTopEvents->fetchAll();
 ?>
@@ -64,14 +60,13 @@ $topEvents = $stmtTopEvents->fetchAll();
                 <a class="navbar-brand fw-bold" href="#">BÉLI TIKÉT</a>
                 <!-- Search Bar -->
                 <div class="mx-auto" style="width: 40%;">
-                    <div class="input-group">
-                    <input type="text" class="form-control search-bar" placeholder="Cari event seru di sini"
-                    id="searchInput" aria-label="Search">
-                        <button class="btn btn-primary" type="button">
-                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16"
-                                height="16">
+                    <form action="jelajah.php" method="get" class="input-group">
+                        <input type="text" name="search" class="form-control search-bar" placeholder="Cari event seru di sini"
+                            id="searchInput" aria-label="Search">
+                        <button class="btn btn-primary" type="submit">
+                            <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" alt="Cari" width="16" height="16">
                         </button>
-                    </div>
+                    </form>
                 </div>
 
                 <!-- Menu Kanan -->
@@ -89,14 +84,17 @@ $topEvents = $stmtTopEvents->fetchAll();
                     <?php else: ?>
                     <!-- Profile Dropdown -->
                     <div class="dropdown">
-                        <a href="#" class="btn btn-light d-flex align-items-center gap-2 px-3" id="dropdownMenuButton" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a href="#" class="btn btn-light d-flex align-items-center gap-2 px-3" id="dropdownMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user-circle fa-lg"></i>
                             <span><?php echo $userName ? htmlspecialchars($userName) : 'Profil'; ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <li class="dropdown-header">Halo, <?php echo $userName ? htmlspecialchars($userName) : 'Pengguna'; ?></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header">Halo,
+                                <?php echo $userName ? htmlspecialchars($userName) : 'Pengguna'; ?></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="php/riwayat.php">Tiket Saya</a></li>
                             <li><a class="dropdown-item" href="php/profile.php">Informasi Dasar</a></li>
                             <li><a class="dropdown-item" href="php/pengaturan.php">Pengaturan</a></li>
@@ -197,30 +195,29 @@ $topEvents = $stmtTopEvents->fetchAll();
             <h3 class="fw-bold text-center mb-4">Top Events!</h3>
             <div class="d-flex justify-content-around align-items-center">
                 <?php foreach ($topEvents as $index => $event): ?>
-                    <div class="d-flex align-items-center gap-3">
-                        <!-- Angka -->
-                        <div class="text-center">
-                            <h1 class="display-1 fw-bold text-white" style="opacity: 0.9;">
-                                <?php echo $index + 1; ?>
-                            </h1>
-                        </div>
-                        <!-- Gambar -->
-                        <div class="position-relative text-center" style="width: 300px;">
-                            <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>">
-                                <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>" 
-                                    alt="Event <?php echo $index + 1; ?>" 
-                                    class="position-relative rounded-3"
-                                    style="width: 100%; height: auto; object-fit: contain; z-index: 1; border: 2px solid white;">
-                            </a>
-                        </div>
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Angka -->
+                    <div class="text-center">
+                        <h1 class="display-1 fw-bold text-white" style="opacity: 0.9;">
+                            <?php echo $index + 1; ?>
+                        </h1>
                     </div>
+                    <!-- Gambar -->
+                    <div class="position-relative text-center" style="width: 300px;">
+                        <a href="php/tiket-page.php?event_id=<?php echo $event['event_id']; ?>">
+                            <img src="<?php echo htmlspecialchars($event['event_image_path']); ?>"
+                                alt="Event <?php echo $index + 1; ?>" class="position-relative rounded-3"
+                                style="width: 100%; height: auto; object-fit: contain; z-index: 1; border: 2px solid white;">
+                        </a>
+                    </div>
+                </div>
                 <?php endforeach; ?>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer>    
+    <footer>
         <div class="footer">
             <div class="container">
                 <div class="row">
@@ -270,23 +267,26 @@ $topEvents = $stmtTopEvents->fetchAll();
     <!-- Bootstrap 5.3 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="javascript/navbar.js"></script>
-    <script>
-        document.getElementById('searchInput').addEventListener('input', async (e) => {
-    const searchQuery = e.target.value.trim();
-
-    // Kirim permintaan ke server untuk pencarian
-    const response = await fetch(`?search=${encodeURIComponent(searchQuery)}`);
-    const html = await response.text();
-
-    // Ambil elemen yang memuat daftar event dan perbarui kontennya
-    const eventContainer = document.querySelector('.row.g-4');
-    const parser = new DOMParser();
-    const newDoc = parser.parseFromString(html, 'text/html');
-    const newEvents = newDoc.querySelector('.row.g-4').innerHTML;
-
-    eventContainer.innerHTML = newEvents;
-});
-    </script>
-</body>
+    </body>
 
 </html>
+
+
+
+    <!-- <script>
+    document.getElementById('searchInput').addEventListener('input', async (e) => {
+        const searchQuery = e.target.value.trim();
+
+        // Kirim permintaan ke server untuk pencarian
+        const response = await fetch(`?search=${encodeURIComponent(searchQuery)}`);
+        const html = await response.text();
+
+        // Ambil elemen yang memuat daftar event dan perbarui kontennya
+        const eventContainer = document.querySelector('.row.g-4');
+        const parser = new DOMParser();
+        const newDoc = parser.parseFromString(html, 'text/html');
+        const newEvents = newDoc.querySelector('.row.g-4').innerHTML;
+
+        eventContainer.innerHTML = newEvents;
+    });
+    </script> -->
