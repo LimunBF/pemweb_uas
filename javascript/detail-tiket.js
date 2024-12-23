@@ -1,65 +1,82 @@
-const jumlahTiket1 = document.getElementById('jumlahTiket1');
-const jumlahTiket2 = document.getElementById('jumlahTiket2');
-const daftarTiket = document.querySelector('.list-unstyled');
-const totalHarga = document.querySelector('.fs-5 span');
-
-const hargaTiket1 = 500000; // Harga Tiket 1
-const hargaTiket2 = 750000; // Harga Tiket 2
-
-const btnBayar = document.getElementById('btnBayar'); // Tombol Selesaikan Pembayaran
+// Selectors for dynamic updates
+const daftarTiketContainer = document.querySelector('.list-unstyled');
+const totalHargaElement = document.querySelector('.fs-5 span');
+const btnBayar = document.getElementById('btnBayar');
 const btnCheckout = document.getElementById('btnCheckout');
-const btnCheckout2 = document.getElementById('btnCheckout2');
 const btnKonfirmasi = document.getElementById('btnKonfirmasi');
-const btnPembayaran = document.getElementById('btnPembayaran');
 const emailInput = document.getElementById('email');
 const emailKonfirmasi = document.getElementById('emailKonfirmasi');
 const tabs = document.querySelectorAll('.nav-link');
-const currentPage = document.getElementById('currentPage');
 
-// Fungsi untuk memperbarui daftar tiket
-function updateDaftarTiket() {
-    const jumlah1 = parseInt(jumlahTiket1.value);
-    const jumlah2 = parseInt(jumlahTiket2.value);
+// Automatically get all dropdowns dynamically
+const ticketDropdowns = document.querySelectorAll('[id^="jumlahTiket"]');
 
-    // Kosongkan daftar tiket
-    daftarTiket.innerHTML = '';
+// Disable "Bayar" button initially
+btnBayar.setAttribute('disabled', true);
 
-    let total = 0;
+// Function to update ticket summary dynamically
+function updateTicketSummary() {
+    const selectedTickets = [];
+    let totalPrice = 0;
 
-    // Tambahkan tiket 1 jika jumlahnya lebih dari 0
-    if (jumlah1 > 0) {
-        daftarTiket.innerHTML += `
-            <li class="mb-2">Jenis Tiket 1: <strong>${jumlah1}</strong> x Rp ${hargaTiket1.toLocaleString('id-ID')}</li>
-        `;
-        total += jumlah1 * hargaTiket1;
-    }
+    // Iterate over all ticket dropdowns
+    ticketDropdowns.forEach(dropdown => {
+        const ticketId = dropdown.id.replace('jumlahTiket', '');
+        const quantity = parseInt(dropdown.value);
+        const ticketElement = document.querySelector(`[data-ticket-id="${ticketId}"]`);
 
-    // Tambahkan tiket 2 jika jumlahnya lebih dari 0
-    if (jumlah2 > 0) {
-        daftarTiket.innerHTML += `
-            <li class="mb-2">Jenis Tiket 2: <strong>${jumlah2}</strong> x Rp ${hargaTiket2.toLocaleString('id-ID')}</li>
-        `;
-        total += jumlah2 * hargaTiket2;
-    }
+        if (quantity > 0 && ticketElement) {
+            const ticketType = ticketElement.dataset.ticketType;
+            const ticketPrice = parseInt(ticketElement.dataset.ticketPrice);
 
-    // Update total harga
-    totalHarga.textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            // Add ticket details to the summary
+            selectedTickets.push({
+                ticketType,
+                quantity,
+                price: ticketPrice,
+                totalPrice: ticketPrice * quantity,
+            });
+
+            // Update total price
+            totalPrice += ticketPrice * quantity;
+        }
+    });
+
+    // Render the ticket summary
+    renderTicketSummary(selectedTickets, totalPrice);
 }
 
-// Event listener untuk mendeteksi perubahan dropdown
-jumlahTiket1.addEventListener('change', updateDaftarTiket);
-jumlahTiket2.addEventListener('change', updateDaftarTiket);
+// Function to render the ticket summary in the UI
+function renderTicketSummary(tickets, totalPrice) {
+    // Clear existing ticket list
+    daftarTiketContainer.innerHTML = '';
 
-// Inisialisasi daftar tiket pada saat halaman pertama kali dimuat
-updateDaftarTiket();
+    if (tickets.length > 0) {
+        tickets.forEach(ticket => {
+            const listItem = document.createElement('li');
+            listItem.className = 'mb-2';
+            listItem.innerHTML = `${ticket.ticketType}: <strong>${ticket.quantity}</strong> x Rp ${ticket.price.toLocaleString('id-ID')}`;
+            daftarTiketContainer.appendChild(listItem);
+        });
 
-// Tombol Checkout
+        totalHargaElement.textContent = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+    } else {
+        daftarTiketContainer.innerHTML = '<li class="mb-2">Belum ada tiket yang dipilih.</li>';
+        totalHargaElement.textContent = 'Rp 0';
+    }
+}
+
+// Initialize the ticket summary when the page loads
+updateTicketSummary();
+
+// Add change listeners to all dropdowns to update the summary
+ticketDropdowns.forEach(dropdown => {
+    dropdown.addEventListener('change', updateTicketSummary);
+});
+
+// Checkout button logic
 btnCheckout.addEventListener('click', () => {
-    const jumlah1 = parseInt(jumlahTiket1.value);
-    const jumlah2 = parseInt(jumlahTiket2.value);
-
-    // Validasi apakah ada tiket yang dipilih
-    if (jumlah1 === 0 && jumlah2 === 0) {
+    if (Array.from(ticketDropdowns).every(dropdown => parseInt(dropdown.value) === 0)) {
         alert('Pilih setidaknya satu tiket sebelum melanjutkan.');
         return;
     }
@@ -68,65 +85,47 @@ btnCheckout.addEventListener('click', () => {
     document.querySelector('#biodata-tab').click();
 });
 
-// Tombol Konfirmasi
+// Confirmation button logic
 btnKonfirmasi.addEventListener('click', (e) => {
     e.preventDefault();
 
-    // Tangkap nilai nama dan email
     const namaInput = document.getElementById('nama').value;
     const emailInputValue = emailInput.value;
 
-    // Validasi nama dan email sebelum melanjutkan
     if (!namaInput || !emailInputValue) {
         alert('Masukkan nama dan email terlebih dahulu.');
         return;
     }
 
-    // Tampilkan email pada tab Konfirmasi
+    // Display email in confirmation tab
     emailKonfirmasi.textContent = emailInputValue;
 
-    // Simpan nama dan email dalam session storage untuk digunakan di server
+    // Store user details in sessionStorage
     sessionStorage.setItem('user_name', namaInput);
     sessionStorage.setItem('email', emailInputValue);
 
-    // Pindah ke tab Konfirmasi
+    // Move to confirmation tab
     document.querySelector('#konfirmasi-tab').disabled = false;
     document.querySelector('#konfirmasi-tab').click();
 });
 
-
-// Tombol Pembayaran
+// Payment button logic
 btnPembayaran.addEventListener('click', () => {
+    // Enable the payment tab and navigate to it
     document.querySelector('#pembayaran-tab').disabled = false;
     document.querySelector('#pembayaran-tab').click();
 });
 
-// Aktifkan tombol "Selesaikan Pembayaran" hanya pada tab 4
+// Handle tab navigation to enable/disable "Bayar" button
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
         if (tab.id === 'pembayaran-tab') {
-            btnBayar.removeAttribute('disabled'); // Aktifkan tombol
+            btnBayar.removeAttribute('disabled'); // Enable "Bayar" button
         } else {
-            btnBayar.setAttribute('disabled', true); // Nonaktifkan tombol
+            btnBayar.setAttribute('disabled', true); // Disable "Bayar" button
         }
-
-        // Update nama halaman sesuai tab yang aktif
-        currentPage.textContent = tab.textContent;
     });
 });
 
-// Tombol Checkout 2
-btnCheckout2.addEventListener('click', () => {
-    const jumlah1 = parseInt(jumlahTiket1.value);
-    const jumlah2 = parseInt(jumlahTiket2.value);
-
-    if (jumlah1 === 0 && jumlah2 === 0) {
-        alert('Anda belum memilih tiket. Silakan pilih tiket terlebih dahulu.');
-        return;
-    }
-
-    if (confirm('Apakah Anda yakin ingin melanjutkan ke biodata?')) {
-        document.querySelector('#biodata-tab').disabled = false;
-        document.querySelector('#biodata-tab').click();
-    }
-});
+// Disable the "Bayar" button initially until tab 4 is active
+btnBayar.setAttribute('disabled', true);

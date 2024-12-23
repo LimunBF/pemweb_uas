@@ -200,9 +200,13 @@ try {
                     <div class="tab-pane fade show active" id="tiket" role="tabpanel">
                         <h3 class="fw-bold mb-3">Pilih Tiket</h3>
                         <div class="mb-4">
+
+
                             <?php if ($tickets): ?>
                             <?php foreach ($tickets as $ticket): ?>
-                            <div class="mb-4">
+                            <div class="mb-4" data-ticket-id="<?php echo $ticket['ticket_id']; ?>"
+                                data-ticket-type="<?php echo htmlspecialchars($ticket['ticket_type']); ?>"
+                                data-ticket-price="<?php echo $ticket['price']; ?>">
                                 <h5><?php echo htmlspecialchars($ticket['ticket_type']); ?></h5>
                                 <p>Harga: Rp <?php echo number_format($ticket['price'], 0, ',', '.'); ?></p>
                                 <select class="form-select w-auto" id="jumlahTiket<?php echo $ticket['ticket_id']; ?>">
