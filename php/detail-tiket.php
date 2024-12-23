@@ -53,12 +53,30 @@ if ($isLoggedIn) {
         if ($user) {
             $userName = htmlspecialchars($user['name']); // Sanitasi nama
             $userEmail = htmlspecialchars($user['email']); // Sanitasi email
+            // Jika nama kosong, jangan set readonly
+            $isNameEditable = empty($user['name']); 
         }
     } catch (PDOException $e) {
         // Jika terjadi kesalahan database, kosongkan nama dan email
         $userName = '';
         $userEmail = '';
+        $isNameEditable = true; // Nama bisa diedit jika tidak ditemukan
     }
+}
+
+$message = '';
+if ($isLoggedIn) {
+    if (empty($userName) && empty($userEmail)) {
+        $message = 'Nama dan email belum terisi. Harap lengkapi data Anda.';
+    } elseif (empty($userName)) {
+        $message = 'Nama belum terisi. Harap lengkapi data Anda.';
+    } elseif (empty($userEmail)) {
+        $message = 'Email belum terisi. Harap lengkapi data Anda.';
+    } else {
+        $message = 'Data di atas akan diisi otomatis jika Anda sudah login.';
+    }
+} else {
+    $message = 'Isi nama dan email untuk melanjutkan.';
 }
 ?>
 
@@ -207,16 +225,21 @@ try {
                         <form>
                             <div class="mb-3">
                                 <label for="nama" class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="nama" placeholder="Masukkan nama lengkap" value="<?php echo $userName; ?>" <?php echo $isLoggedIn ? 'readonly' : ''; ?> required>
+                                <input type="text" class="form-control" id="nama" placeholder="Masukkan nama lengkap"
+                                    value="<?php echo $userName; ?>"
+                                    <?php echo $isLoggedIn && !$isNameEditable ? 'readonly' : ''; ?> required>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="Masukkan email lengkap" value="<?php echo $userEmail; ?>" <?php echo $isLoggedIn ? 'readonly' : ''; ?> required>
+                                <input type="email" class="form-control" id="email" placeholder="Masukkan email lengkap"
+                                    value="<?php echo $userEmail; ?>" <?php echo $isLoggedIn ? 'readonly' : ''; ?>
+                                    required>
                             </div>
                             <button class="btn btn-gradient" id="btnKonfirmasi">Lanjutkan</button>
                         </form>
-                        <p class="text-muted" style="margin-top: 10px;">Data di atas akan diisi otomatis jika Anda sudah login.</p>
+                        <p class="text-muted" style="margin-top: 10px;"><?php echo $message; ?></p>
                     </div>
+
 
                     <!-- TAB 3: Konfirmasi -->
                     <div class="tab-pane fade" id="konfirmasi" role="tabpanel">
@@ -252,7 +275,8 @@ try {
                     </ul>
                     <hr class="bg-light">
                     <p class="fs-5 fw-bold">Total: <span>Rp 1.750.000</span></p>
-                    <button class="btn btn-gradient2 w-100 mt-3" id="btnBayar" disabled>Selesaikan Pembayaran</button>
+                    <button class="btn btn-gradient2 w-100 mt-3" id="btnBayar" disabled>Selesaikan
+                        Pembayaran</button>
                 </div>
             </div>
         </div>
@@ -311,68 +335,87 @@ try {
     <script src="../javascript/navbar.js"></script>
     <script src="../javascript/detail-tiket.js"></script>
     <script>
- document.getElementById("btnBayar").addEventListener("click", function () {
-    const selectedTickets = [];
-    <?php foreach ($tickets as $ticket): ?>
-    const jumlahTiket<?php echo $ticket['ticket_id']; ?> = document.getElementById("jumlahTiket<?php echo $ticket['ticket_id']; ?>").value;
-    selectedTickets.push({
-        ticket_id: "<?php echo $ticket['ticket_id']; ?>",
-        quantity: jumlahTiket<?php echo $ticket['ticket_id']; ?>,
-    });
-    <?php endforeach; ?>
-
-    // Filter hanya tiket dengan jumlah > 0
-    const validTickets = selectedTickets.filter(ticket => ticket.quantity > 0);
-
-    // Validasi tiket
-    if (validTickets.length === 0) {
-        alert('Pilih setidaknya satu tiket sebelum melanjutkan.');
-        return;
-    }
-
-    // Ambil nama dan email dari sessionStorage
-    const userName = sessionStorage.getItem('user_name');
-    const email = sessionStorage.getItem('email');
-
-    // Validasi nama dan email sebelum melanjutkan
-    if (!userName || !email) {
-        alert('Masukkan biodata lengkap terlebih dahulu.');
-        return;
-    }
-
-    // Kirim data ke server menggunakan fetch
-    fetch("../php/insert_order.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            tickets: validTickets, // Kirim hanya tiket yang valid
-            user_name: userName,
-            email: email,
-        }),
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Server error, status: " + response.status);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (data.success) {
-                alert("Order berhasil dibuat! ID Order: " + data.order_id);
-                //Redirect jika diperlukan
-                const currentEventId = "<?php echo $event_id; ?>"; // Ambil event_id dari PHP
-                window.location.href = `http://localhost/UAS/pemweb_uas/php/detail-tiket.php?event_id=${currentEventId}`;
-            } else {
-                alert("Gagal membuat order: " + data.message);
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan. Silakan coba lagi. " + (error.message || error));
+    document.getElementById("btnBayar").addEventListener("click", function() {
+        const selectedTickets = [];
+        <?php foreach ($tickets as $ticket): ?>
+        const jumlahTiket<?php echo $ticket['ticket_id']; ?> = document.getElementById(
+            "jumlahTiket<?php echo $ticket['ticket_id']; ?>").value;
+        selectedTickets.push({
+            ticket_id: "<?php echo $ticket['ticket_id']; ?>",
+            quantity: jumlahTiket<?php echo $ticket['ticket_id']; ?>,
         });
-});
+        <?php endforeach; ?>
+
+        const validTickets = selectedTickets.filter(ticket => ticket.quantity > 0);
+        if (validTickets.length === 0) {
+            alert('Pilih setidaknya satu tiket sebelum melanjutkan.');
+            return;
+        }
+
+        // Kirim data ke server untuk mengupdate stok tiket
+        fetch("../php/update_tickets.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    tickets: validTickets
+                }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Stok tiket berhasil diperbarui!");
+                    // Lanjutkan ke proses insert_order.php
+                    processOrder(validTickets);
+                } else {
+                    alert("Gagal memperbarui stok tiket: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat memperbarui stok tiket.");
+            });
+    });
+
+    // Fungsi untuk memproses pesanan
+    function processOrder(validTickets) {
+        const userName = sessionStorage.getItem('user_name');
+        const email = sessionStorage.getItem('email');
+
+        if (!userName || !email) {
+            alert('Masukkan biodata lengkap terlebih dahulu.');
+            return;
+        }
+
+        fetch("../php/insert_order.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    tickets: validTickets,
+                    user_name: userName,
+                    email: email,
+                }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Order berhasil dibuat! ID Order: " + data.order_id);
+                    const currentEventId = "<?php echo $event_id; ?>";
+                    window.location.href =
+                        `http://localhost/UAS/pemweb_uas/php/tiket-page.php?event_id=${currentEventId}`;
+                } else {
+                    alert("Gagal membuat order: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat membuat order.");
+            });
+    }
+
 
 
 
