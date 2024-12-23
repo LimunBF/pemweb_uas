@@ -72,16 +72,28 @@ btnCheckout.addEventListener('click', () => {
 btnKonfirmasi.addEventListener('click', (e) => {
     e.preventDefault();
 
-    // Validasi email sebelum melanjutkan
-    if (!emailInput.value) {
-        alert('Masukkan email terlebih dahulu.');
+    // Tangkap nilai nama dan email
+    const namaInput = document.getElementById('nama').value;
+    const emailInputValue = emailInput.value;
+
+    // Validasi nama dan email sebelum melanjutkan
+    if (!namaInput || !emailInputValue) {
+        alert('Masukkan nama dan email terlebih dahulu.');
         return;
     }
 
-    emailKonfirmasi.textContent = emailInput.value;
+    // Tampilkan email pada tab Konfirmasi
+    emailKonfirmasi.textContent = emailInputValue;
+
+    // Simpan nama dan email dalam session storage untuk digunakan di server
+    sessionStorage.setItem('user_name', namaInput);
+    sessionStorage.setItem('email', emailInputValue);
+
+    // Pindah ke tab Konfirmasi
     document.querySelector('#konfirmasi-tab').disabled = false;
     document.querySelector('#konfirmasi-tab').click();
 });
+
 
 // Tombol Pembayaran
 btnPembayaran.addEventListener('click', () => {

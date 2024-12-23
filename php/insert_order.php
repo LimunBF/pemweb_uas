@@ -2,19 +2,25 @@
 // Start session
 session_start();
 
-// Cek apakah pengguna sudah login
-$isLoggedIn = isset($_SESSION['user_id']); // Cek apakah sesi user_id ada
-
-if (!$isLoggedIn) {
-    die("Anda harus login terlebih dahulu.");
-}
-
 // Ambil data dari frontend
 $data = json_decode(file_get_contents('php://input'), true);
 
-// Pastikan data tiket yang valid
+// Validasi data tiket
 if (!isset($data['tickets']) || empty($data['tickets'])) {
-    die("Data tiket tidak valid.");
+    die(json_encode(['success' => false, 'message' => 'Data tiket tidak valid.']));
+}
+
+// Cek apakah pengguna login
+$isLoggedIn = isset($_SESSION['user_id']);
+
+// Ambil informasi pengguna jika tidak login
+if (!$isLoggedIn) {
+    $user_name = $data['user_name'] ?? null;
+    $email = $data['email'] ?? null;
+
+    if (!$user_name || !$email) {
+        die(json_encode(['success' => false, 'message' => 'Nama dan email diperlukan untuk pengguna tanpa login.']));
+    }
 }
 
 // Koneksi ke database
@@ -22,93 +28,111 @@ include_once '../connection/connect.php';
 try {
     $pdo = getDatabaseConnection();
 } catch (PDOException $e) {
-    die("Koneksi gagal: " . $e->getMessage());
+    die(json_encode(['success' => false, 'message' => 'Koneksi gagal: ' . $e->getMessage()]));
 }
 
-// Ambil data user_id dan hitung total harga
-$user_id = $_SESSION['user_id'];
 $total_price = 0;
 
+// Ambil semua ticket_id dari data yang diterima
+$ticket_ids = array_column($data['tickets'], 'ticket_id');
+
+// Ambil data tiket dari database
+$sql = "SELECT ticket_id, event_id, price FROM tickets WHERE ticket_id IN (" . implode(',', array_fill(0, count($ticket_ids), '?')) . ")";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($ticket_ids);
+$ticket_data_map = [];
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $ticket_data_map[$row['ticket_id']] = $row;
+}
+
+// Hitung total harga dan validasi tiket
 foreach ($data['tickets'] as $ticket) {
     $ticket_id = $ticket['ticket_id'];
     $quantity = $ticket['quantity'];
 
-    // Ambil harga tiket berdasarkan ticket_id
-    $sql = "SELECT price FROM tickets WHERE ticket_id = :ticket_id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(['ticket_id' => $ticket_id]);
-    $ticket_data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($ticket_data) {
-        $total_price += $ticket_data['price'] * $quantity;
+    if (isset($ticket_data_map[$ticket_id]) && $quantity > 0) {
+        $total_price += $ticket_data_map[$ticket_id]['price'] * $quantity;
+    } else {
+        die(json_encode(['success' => false, 'message' => "Tiket dengan ID $ticket_id tidak valid."]));
     }
 }
 
-// Insert data ke tabel orders
+// Mulai transaksi
+$pdo->beginTransaction();
+
 try {
-    $sql = "INSERT INTO orders (user_id, total_price, payment_status, created_at, updated_at) 
-            VALUES (:user_id, :total_price, 'completed', NOW(), NOW())";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        'user_id' => $user_id,
-        'total_price' => $total_price,
-    ]);
-
-    // Ambil order_id yang baru saja dimasukkan
-    $order_id = $pdo->lastInsertId();
-
-    // Beri respons sukses
-    echo json_encode(['success' => true, 'order_id' => $order_id]);
-} catch (PDOException $e) {
-    // Beri respons error
-    echo json_encode(['success' => false, 'message' => 'Gagal menyimpan order: ' . $e->getMessage()]);
-}
-
-//Insert data ke tabel purchase_history
-foreach ($data['tickets'] as $ticket) {
-    $ticket_id = $ticket['ticket_id'];
-    $quantity = $ticket['quantity'];
-
-    // Pastikan jumlah tiket lebih dari 0
-    if ($quantity <= 0) {
-        continue; // Lewati iterasi jika quantity tidak valid
+    // Buat entry ke tabel orders
+    if ($isLoggedIn) {
+        // Untuk pengguna login
+        $user_id = $_SESSION['user_id'];
+        $sql = "INSERT INTO orders (user_id, total_price, payment_status, created_at, updated_at) 
+                VALUES (:user_id, :total_price, 'completed', NOW(), NOW())";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            'user_id' => $user_id,
+            'total_price' => $total_price,
+        ]);
+        $order_id = $pdo->lastInsertId();
+    } else {
+        // Untuk pengguna tanpa login
+        $sql = "INSERT INTO orders (user_id, total_price, payment_status, created_at, updated_at) 
+                VALUES (NULL, :total_price, 'completed', NOW(), NOW())";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            'total_price' => $total_price,
+        ]);
+        $order_id = $pdo->lastInsertId();
     }
 
-    // Ambil event_id dan harga tiket berdasarkan ticket_id
-    $sql = "SELECT event_id, price FROM tickets WHERE ticket_id = :ticket_id";
+    // Insert ke tabel purchase_history atau purchase_history_nl
+    if ($isLoggedIn) {
+        $sql = "INSERT INTO purchase_history (user_id, order_id, event_id, ticket_id, purchase_date, quantity, total_price) 
+                VALUES (:user_id, :order_id, :event_id, :ticket_id, NOW(), :quantity, :total_price)";
+    } else {
+        $sql = "INSERT INTO purchase_history_nl (user_name, email, order_id, event_id, ticket_id, purchase_date, quantity, total_price) 
+                VALUES (:user_name, :email, :order_id, :event_id, :ticket_id, NOW(), :quantity, :total_price)";
+    }
     $stmt = $pdo->prepare($sql);
-    $stmt->execute(['ticket_id' => $ticket_id]);
-    $ticket_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Pastikan data tiket ditemukan
-    if ($ticket_data) {
+    foreach ($data['tickets'] as $ticket) {
+        $ticket_id = $ticket['ticket_id'];
+        $quantity = $ticket['quantity'];
+
+        $ticket_data = $ticket_data_map[$ticket_id];
         $event_id = $ticket_data['event_id'];
         $price = $ticket_data['price'];
-        $total_price = $price * $quantity;
+        $total_price_per_ticket = $price * $quantity;
 
-        // Insert ke tabel purchase_history
-        $sql = "INSERT INTO purchase_history (user_id, order_id, event_id, ticket_id, purchase_date, quantity, total_price)
-                VALUES (:user_id, :order_id, :event_id, :ticket_id, NOW(), :quantity, :total_price)";
-        try {
-            $stmt = $pdo->prepare($sql);
+        if ($isLoggedIn) {
             $stmt->execute([
                 'user_id' => $user_id,
                 'order_id' => $order_id,
                 'event_id' => $event_id,
                 'ticket_id' => $ticket_id,
                 'quantity' => $quantity,
-                'total_price' => $total_price,
+                'total_price' => $total_price_per_ticket,
             ]);
-        } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Gagal menyimpan riwayat pembelian: ' . $e->getMessage()]);
-            exit; // Hentikan eksekusi jika ada error
+        } else {
+            $stmt->execute([
+                'user_name' => $user_name,
+                'email' => $email,
+                'order_id' => $order_id, // Ini diambil dari tabel orders
+                'event_id' => $event_id,
+                'ticket_id' => $ticket_id,
+                'quantity' => $quantity,
+                'total_price' => $total_price_per_ticket,
+            ]);
         }
-    } else {
-        // Jika data tiket tidak ditemukan, lewati iterasi
-        continue;
     }
-}
 
-// Beri response bahwa data telah berhasil disimpan
-//echo json_encode(['success' => true, 'order_id' => $order_id]);
+    // Commit transaksi
+    $pdo->commit();
+
+    // Respons sukses
+    echo json_encode(['success' => true, 'order_id' => $order_id]);
+} catch (PDOException $e) {
+    // Rollback jika terjadi error
+    $pdo->rollBack();
+    echo json_encode(['success' => false, 'message' => 'Gagal menyimpan data: ' . $e->getMessage()]);
+}
 ?>
