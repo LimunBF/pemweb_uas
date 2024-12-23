@@ -200,8 +200,6 @@ try {
                     <div class="tab-pane fade show active" id="tiket" role="tabpanel">
                         <h3 class="fw-bold mb-3">Pilih Tiket</h3>
                         <div class="mb-4">
-
-
                             <?php if ($tickets): ?>
                             <?php foreach ($tickets as $ticket): ?>
                             <div class="mb-4" data-ticket-id="<?php echo $ticket['ticket_id']; ?>"
@@ -210,7 +208,11 @@ try {
                                 <h5><?php echo htmlspecialchars($ticket['ticket_type']); ?></h5>
                                 <p>Harga: Rp <?php echo number_format($ticket['price'], 0, ',', '.'); ?></p>
                                 <select class="form-select w-auto" id="jumlahTiket<?php echo $ticket['ticket_id']; ?>">
-                                    <?php for ($i = 0; $i <= $ticket['quantity_available']; $i++): ?>
+                                    <?php 
+                            // Gunakan min() untuk memastikan maksimal 10 tiket atau sisa tiket yang tersedia
+                            $maxDropdown = min($ticket['quantity_available'], 10);
+                            for ($i = 0; $i <= $maxDropdown; $i++): 
+                        ?>
                                     <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                                     <?php endfor; ?>
                                 </select>
@@ -222,6 +224,7 @@ try {
                         </div>
                         <button class="btn btn-gradient" id="btnCheckout">Checkout</button>
                     </div>
+
 
                     <!-- TAB 2: Biodata -->
                     <div class="tab-pane fade" id="biodata" role="tabpanel">
